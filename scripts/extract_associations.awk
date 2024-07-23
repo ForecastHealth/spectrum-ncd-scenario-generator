@@ -32,8 +32,21 @@ BEGIN {
 }
 
 /PreventionID/ && in_association == "Prevention" {
-    print "PreventionID:", $3
-    print "Prevention Description:", $4
+    prevention_id = $3
+    prevention_desc = ""
+    for (i = 4; i <= NF; i++) {
+        if ($i ~ /^"/) {
+            prevention_desc = $i
+            for (j = i + 1; j <= NF; j++) {
+                prevention_desc = prevention_desc "," $j
+                if ($j ~ /"$/) break
+            }
+            break
+        }
+    }
+    gsub(/^"|"$/, "", prevention_desc)  # Remove surrounding quotes
+    print "PreventionID:", prevention_id
+    print "Prevention Description:", prevention_desc
 }
 
 /NumImpacts/ && in_association == "Prevention" {
