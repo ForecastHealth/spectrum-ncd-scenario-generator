@@ -1,67 +1,39 @@
 import csv
 import sys
-import os
+from pathlib import Path
 
-def process_risk_data(input_file):
-    # Read the risk IDs from the CSV data
+def generate_risk_mapping(constants_file, output_file):
+    # Read risk IDs from constants file
     risk_ids = []
-    constants_file = './src/constants.csv'
-    if not os.path.exists(constants_file):
-        print(f"Error: {constants_file} not found. Please ensure the file exists in the correct location.", file=sys.stderr)
-        sys.exit(1)
-
-    with open(constants_file, 'r') as f:
+    with open(constants_file, 'r', newline='') as f:
         reader = csv.DictReader(f)
-        for row_num, row in enumerate(reader, start=2):  # start=2 because row 1 is the header
+        for row in reader:
             if row['category'] == 'riskID':
-                if not row['value']:
-                    print(f"Warning: Empty value for riskID on row {row_num} in {constants_file}. Skipping this row.", file=sys.stderr)
-                    continue
-                try:
-                    risk_ids.append((int(row['value']), row['label']))
-                except ValueError:
-                    print(f"Error: Invalid value '{row['value']}' for riskID on row {row_num} in {constants_file}. Skipping this row.", file=sys.stderr)
-    
-    risk_ids.sort(key=lambda x: x[0])  # Sort by value
-    
-    print(f"Number of valid risk IDs: {len(risk_ids)}", file=sys.stderr)
+                risk_ids.append(row['label'])
 
-    with open(input_file, 'r') as infile:
-        reader = csv.reader(infile)
-        writer = csv.writer(sys.stdout)
+    # Generate mapping
+    with open(output_file, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['index', 'riskID', 'level', 'sex'])
+        index = 0
+        for risk_id in risk_ids:
+            for level in range(1, 5):
+                for sex in ['Both', 'Male', 'Female']:
+                    writer.writerow([index, risk_id, level, sex])
+                    index += 1
 
-        # Write header
-        writer.writerow(['RiskID', 'Level', 'Sex'] + [f'Year_{i}' for i in range(1, 42)])
-
-        risk_index = 0
-        for row_index, row in enumerate(reader):
-            if not any(row):  # Skip empty rows
-                continue
-
-            if risk_index < len(risk_ids):
-                risk_id, risk_label = risk_ids[risk_index]
-            else:
-                print(f"Warning: Extra row found at row {row_index + 1}. Using 'Unknown' as risk label.", file=sys.stderr)
-                risk_label = f"Unknown_{risk_index - len(risk_ids) + 1}"
-
-            level = (row_index // 3) % 4 + 1
-            sex_index = row_index % 3
-            sex = ['Both', 'Male', 'Female'][sex_index]
-
-            # Only write non-empty rows
-            if any(row[3:]):
-                writer.writerow([risk_label, level, sex] + row[3:44])  # Assuming 41 years of data
-
-            # Move to the next risk ID when we've processed all levels and sexes
-            if row_index % 12 == 11:
-                risk_index += 1
-
-        print(f"Processed {row_index + 1} rows", file=sys.stderr)
+    print(f"Mapping generated successfully. Output written to {output_file}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python -m scripts.map_risk_ids input_file", file=sys.stderr)
+    if len(sys.argv) != 3:
+        print("Usage: python script.py <constants_file_path> <output_file_path>")
         sys.exit(1)
 
-    input_file = sys.argv[1]
-    process_risk_data(input_file)
+    constants_file = Path(sys.argv[1])
+    output_file = Path(sys.argv[2])
+
+    if not constants_file.is_file():
+        print(f"Error: Constants file {constants_file} not found.")
+        sys.exit(1)
+
+    generate_risk_mapping(constants_file, output_file)
