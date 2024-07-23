@@ -12,13 +12,19 @@ def process_risk_data(input_file):
 
     with open(constants_file, 'r') as f:
         reader = csv.DictReader(f)
-        for row in reader:
+        for row_num, row in enumerate(reader, start=2):  # start=2 because row 1 is the header
             if row['category'] == 'riskID':
-                risk_ids.append((int(row['value']), row['label']))
+                if not row['value']:
+                    print(f"Warning: Empty value for riskID on row {row_num} in {constants_file}. Skipping this row.", file=sys.stderr)
+                    continue
+                try:
+                    risk_ids.append((int(row['value']), row['label']))
+                except ValueError:
+                    print(f"Error: Invalid value '{row['value']}' for riskID on row {row_num} in {constants_file}. Skipping this row.", file=sys.stderr)
     
     risk_ids.sort(key=lambda x: x[0])  # Sort by value
     
-    print(f"Number of risk IDs: {len(risk_ids)}", file=sys.stderr)
+    print(f"Number of valid risk IDs: {len(risk_ids)}", file=sys.stderr)
 
     with open(input_file, 'r') as infile:
         reader = csv.reader(infile)
@@ -26,10 +32,6 @@ def process_risk_data(input_file):
 
         # Write header
         writer.writerow(['RiskID', 'Level', 'Sex'] + [f'Year_{i}' for i in range(1, 42)])
-
-        # Skip the first two rows (58 and 4)
-        next(reader)
-        next(reader)
 
         risk_index = 0
         for row_index, row in enumerate(reader):
@@ -39,7 +41,7 @@ def process_risk_data(input_file):
             if risk_index < len(risk_ids):
                 risk_id, risk_label = risk_ids[risk_index]
             else:
-                print(f"Warning: Extra row found at row {row_index + 3}. Using 'Unknown' as risk label.", file=sys.stderr)
+                print(f"Warning: Extra row found at row {row_index + 1}. Using 'Unknown' as risk label.", file=sys.stderr)
                 risk_label = f"Unknown_{risk_index - len(risk_ids) + 1}"
 
             level = (row_index // 3) % 4 + 1
@@ -58,7 +60,7 @@ def process_risk_data(input_file):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python script.py input_file", file=sys.stderr)
+        print("Usage: python -m scripts.map_risk_ids input_file", file=sys.stderr)
         sys.exit(1)
 
     input_file = sys.argv[1]
