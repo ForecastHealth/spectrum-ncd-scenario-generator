@@ -152,3 +152,45 @@ This set of scripts provides a comprehensive solution for processing complex NCD
 ---
 
 This description provides an overview of each script, its purpose, functionality, and usage instructions. It also outlines the overall workflow for using these scripts together. You can include this in your README file to give users a clear understanding of the tools available in your repository and how to use them.
+
+# Risk ID Mapping Script Development
+
+## Problem Statement
+We needed to develop a Python script to generate a CSV file mapping risk IDs to their corresponding levels and sexes. This mapping is based on the structure of a risk factor coverage data file, but without including the actual coverage data.
+
+## Key Requirements
+1. Generate a CSV with columns: index, riskID, level, sex
+2. Use risk ID information from a constants file (`./src/constants.csv`)
+3. Match the structure of the risk factor coverage data file (4 levels, 3 sexes per risk ID)
+4. Do not include the actual coverage data in the output
+
+## Solution Overview
+We developed a Python script that:
+
+1. Reads risk ID information from the constants file
+2. Generates a mapping based on the structure of the risk factor coverage data
+3. Outputs a CSV file with index, riskID, level, and sex information
+
+## Key Features of the Script
+- Reads and processes risk IDs from the constants file
+- Generates a mapping without needing to read the full coverage data file
+- Creates an index for each combination of riskID, level, and sex
+- Handles potential errors in the constants file (e.g., empty or invalid entries)
+- Outputs warnings and error messages to stderr for easier debugging
+
+## Usage
+The script is run from the command line and outputs the mapping data to stdout, which can be redirected to a file.
+
+## Structure of the Output
+- Index: A unique identifier for each row
+- RiskID: The risk identifier from the constants file
+- Level: Values from 1 to 4, representing different levels for each risk
+- Sex: 'Both', 'Male', or 'Female'
+
+## Future Considerations
+- If the structure of risk levels or sex categories changes, the script will need to be updated
+- The script relies on the format of the constants file remaining consistent
+- If additional mapping information is needed in the future, the script can be easily extended
+
+## Conclusion
+This script provides a straightforward solution for generating a mapping of risk IDs to levels and sexes, based on the structure of the risk factor coverage data. It creates a useful reference file that can be used in conjunction with the actual coverage data for further analysis or processing.
