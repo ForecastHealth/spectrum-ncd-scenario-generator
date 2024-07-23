@@ -1,0 +1,489 @@
+  (*Diseases*)
+  NC_NoDisease    = -1;
+  NC_AllDiseases  = 0;
+  NC_ARF_RHD      = 1;      // Acute rheumatic fever and rheumatic heart disease
+  NC_CVD          = 2;  //cardio vascular disease
+  NC_Diabetes     = 3;
+  NC_BrstCncr     = 4;   //breast cancer
+  NC_CervicCncr   = 5;   //cervical cancer
+  NC_ColonCncr    = 6;  //colon cancer
+  NC_Depression   = 7;
+  NC_Postnatal    = 8;  //post natal depression
+  NC_Anxiety      = 9;
+  NC_Psychosis    = 10;
+  NC_Bipolar      = 11;
+  NC_Epilepsy     = 12;
+  NC_Alcoholism   = 13;
+  NC_Conduct      = 14;  //conduct disorder (ie disruptive children)
+  NC_Attention    = 15;  //Attention deficit hyperactivity disorder (ADHD);
+  NC_COPD         = 16;  //Chronic Obstructive Pulmonary Disease
+  NC_Asthma       = 17;
+  NC_LungCncr     = 18;
+  NC_ALRI         = 19;
+  NC_maxDiseases  = 19;
+
+
+  (*health states*)
+  NC_AllStates            = 0;
+  NC_None                 = 1;
+
+  NC_DsFreeSus            = 2;
+
+  //CVD
+  NC_StrokeAcute          = 3; //A cute Stroke <3
+  NC_IHDAcute             = 4; //Acute Ischemic Heart Disease
+  NC_StrokeIHDAcute       = 5;
+  NC_StrokePostAcute      = 6;
+  NC_IHDPostAcute         = 7;
+  NC_StrokeIHDPostAcute   = 8;
+
+  //MNS
+  NC_PsychosisEpsd        = 9;
+  NC_DepressionEpsd       = 10;
+  NC_EpilepsyEpsd         = 11;
+  NC_AlcoholismEpsd       = 12;
+  NC_DepressAlcEpsd       = 13;
+  NC_PsychoticEpsd        = 14;
+  NC_BipolarEpsd          = 15;
+  NC_ConductEpsd          = 16;
+  NC_AttentionEpsd        = 17;
+  NC_PostnatalEpsd        = 18;
+  NC_AnxietyEpsd          = 19;
+
+  //Lung
+  NC_COPDEpsd             = 20;
+  NC_AsthmaEpsd           = 21;
+
+  //Diabetes
+  NC_DiabetesEpsd         = 22;
+  NC_DiabeticRetpathy     = 23;
+  NC_LowerExtrmAmpt       = 24;
+  NC_DiabeticNephropathy  = 25;
+
+
+  //Cancers
+  NC_DsFreeSusScr         = 26;
+  NC_NonCancerous1        = 27;
+  NC_NonCancerous2        = 28;
+  NC_NonCancerous3        = 29;
+
+  //Colorectal
+  NC_PolypLT5mm           = 30;
+  NC_Polyp6to10mm         = 31;
+  NC_PolypGT10mm          = 32;
+  NC_PolypLT5mmClinical   = 33;
+  NC_Polyp6to10mmClinical = 34;
+  NC_PolypGT10mmClinical  = 35;
+
+  NC_PreCancerous1        = 36;
+  NC_PreCancerous2        = 37;
+  NC_PreCancerous3        = 38;
+
+  NC_PreClinical0         = 39;
+  NC_PreClinical1         = 40;
+  NC_PreClinical2         = 41;
+  NC_PreClinical3         = 42;
+  NC_PreClinical4         = 43;
+
+  NC_Clinical0            = 44;
+  NC_Clinical1            = 45;
+  NC_Clinical2            = 46;
+  NC_Clinical3            = 47;
+  NC_Clinical4            = 48;
+  //Cervical
+  NC_HPV16_18             = 49;
+  NC_CIN1_16_18           = 50;
+  NC_CIN2_16_18           = 51;
+  NC_HPVLowRisk           = 52;
+  NC_CIN1LowRisk          = 53;
+  NC_CIN2LowRisk          = 54;
+  NC_HPVHighRisk          = 55;
+  NC_CIN1HighRisk         = 56;
+  NC_CIN2_3_High_Risk     = 57;
+  NC_HPV_16_18_regr       = 58;
+  NC_HPV_High_Risk_regr   = 59;
+  NC_HPV_Low_Risk_regr    = 60;
+  NC_Immunity             = 61;
+  NC_Vaccinated           = 62;
+
+  // health states for Acute rheumatic fever and rhematic heart disease
+//  NC_ARF0                 = 62;  // acute RF , 1st episode
+//  NC_REM                  = 63;  // remission
+//  NC_ARF1                 = 64;  // recurrence ARF
+//  NC_RHD0                 = 65;  // rheumatic heart disease (mild)
+//  NC_STK                  = 66;  // stroke
+//  NC_RHD1                 = 67;  // rheumatic heart disease (severe)
+//  NC_RHD1m                = 68;  // rheumatic heart disease (mild), med management not surgery
+
+  NC_ARF0                 = 63;  //acute RF , 1st episode
+  NC_REM                  = 64;  //remission
+  NC_ARF1                 = 65;  //recurrence ARF1
+  NC_RHD0                 = 66;  //rheumatic heart disease (mild)
+  NC_ARF2                 = 67;  //recurrence ARF2
+  NC_RHD1                 = 68;  //rheumatic heart disease (severe)
+  NC_RHDOp                = 69;  //Post operative RHD
+  NC_STK                  = 70; //Stroke
+  NC_LungCncrEpsd         = 71;
+  NC_ALRIEpsd             = 72;
+  NC_RHD1m                = 73;  //rheumatic heart disease (severe)
+                              //<--Add health states here, before disability!
+  NC_Disability          = 74;
+  NC_Deceased            = 75;
+  NC_maxHlthState        = 75;
+
+
+  (*health state transitions*)
+  NC_AllTransitions = 0;
+  NC_NoTrasition    = 1;
+  NC_Incidence      = 2;
+  NC_Progression    = 3;
+  NC_Recovery       = 4;
+  NC_CFR            = 5;
+  NC_Screened       = 6;
+  NC_Function       = 7;
+  NC_Remission      = 8;
+  NC_Onset          = 9;
+  NC_Recurrence     = 10;
+  NC_maxTransitions = 10;
+
+
+  (*risk factors*)
+  NC_AllRisks         = 0;
+  NC_NoRisk           = 1;
+
+  //CVD
+  NC_BldPrsr160TRlt20 = 2; //systolic blood pressure 160; risk less than 20%
+  NC_BldPrsr140TRlt20 = 3; //systolic blood pressure 140; risk less than 20%
+
+  NC_Cholest8TRlt20   = 4; //Cholesterol 8; risk less than 20%
+  NC_Cholest6TRlt20   = 5; //Cholesterol 6; risk less than 20%
+
+  NC_BldPrsr160TRlt30 = 6; //systolic blood pressure 160; risk less than 30%
+  NC_BldPrsr140TRlt30 = 7; //systolic blood pressure 140; risk less than 30%
+
+  NC_Cholest8TRlt30   = 8; //Cholesterol 8; risk less than 30%
+  NC_Cholest6TRlt30   = 9; //Cholesterol 6; risk less than 30%
+
+  NC_TotalCVDRiskgt20 = 10; //Combo CVD; risk greater than 20%
+  NC_TotalCVDRiskgt30 = 11; //Combo CVD; risk greater than 30%
+
+  NC_NonDiabTotalCVDRisklt10           = 12; //Total risk for CVD less than 10
+  NC_NonDiabTotalCVDRisk10to20SBPgt140 = 13; //TR 10% to 20%, SBP gt 140
+  NC_NonDiabTotalCVDRisk10to20SBPlt140 = 14; //TR 10% to 20%, SBP lt 130
+
+  NC_NonDiabTotalCVDRiskgt20SBPgt130   = 15; //TR >20%, SBP gt 130
+  NC_NonDiabTotalCVDRiskgt20SBPlt130   = 16; //TR >20%, SBP lt 130
+
+  NC_NonDiabSBPgt130=17;
+  NC_NonDiabSBPgt140=18;
+
+  NC_DiabSBPgt130=19;
+  NC_DiabSBPgt140=20;
+  NC_DiabStatinsAgegt40=21;
+
+  NC_CVDRFmax=21;
+
+  //general
+  NC_Smoke            = 22;
+  NC_Inactivity       = 23;
+
+  // indoor/household air pollution
+  NC_Household_AP     = 24;
+
+  NC_maxRisks         = 24;
+
+
+  (*Intervention constants*)
+  //CVD
+  NC_PreventTRgt30              = 1; //Total Risk greater than 30% (CVD)
+  NC_PreventBldPrsr160lt30      = 2; //Blood Pressure 160 risk less than 30%
+  NC_PreventBldPrsr140lt30      = 3; //Blood Pressure 140 risk less than 30%
+  NC_PreventCholest8lt30        = 4; //Cholesterol 8 risk less than 30%
+  NC_PreventCholest6lt30        = 5; //Cholesterol 6 risk less than 30%
+  NC_PreventTRgt20              = 6; //Total Risk greater than 20% (CVD)
+  NC_PreventBldPrsr160lt20      = 7; //Blood Pressure 160 risk less than 20%
+  NC_PreventBldPrsr140lt20      = 8; //Blood Pressure 140 risk less than 20%
+  NC_PreventCholest8lt20        = 9; //Cholesterol 8 risk less than 20%
+  NC_PreventCholest6lt20        = 10;//Cholesterol 6 risk less than 20%
+
+  NC_PreventNonDiabTRlt10           = 11;//No Diabetes, TR < 10%
+  NC_PreventNonDiabTR10to20SBPgt140 = 12;//No Diabetes, TR 10% to 20%, SBP gt 140
+  NC_PreventNonDiabTR10to20SBPlt140 = 13;//No Diabetes, TR 10% to 20%, SBP lt 130
+  NC_PreventNonDiabTRgt20SBPgt130   = 14;//No Diabetes, TR >20%, SBP gt 130
+  NC_PreventNonDiabTRgt20SBPlt130   = 15;//No Diabetes, TR >20%, SBP lt 130
+  NC_PreventNonDiabSBPgt130         = 16;//No Diabetes, SBP > 130
+  NC_PreventNonDiabSBPgt140         = 17;//No Diabetes, SBP > 140
+
+  NC_PreventDiabSBPgt130            = 18;//Diabetes, SBP > 130
+  NC_PreventDiabSBPgt140            = 19;//Diabetes, SBP > 140
+  NC_PreventDiabStatinsAgegt40      = 20;//Diabetes, age > 40
+
+  NC_TreatAMIAcuteAspirin                           = 21;//Treatment of new cases of acute myocardial infarction (AMI) with aspirin
+  NC_TreatAMIAcuteAspirinAndTrombolysis             = 22;
+  NC_TreatAMIAcuteAspirinAndClopidro                = 23;
+  NC_TreatAMIAcutePCIAndAspirinAndClopidro          = 24;
+
+  NC_TreatMechanicalTrombStroke                     = 25;
+  NC_TreatIntravTrombStroke                         = 26;
+
+  NC_TreatPostAcuteIHDComb                          = 27;
+  NC_TreatPostAcuteStrokeComb                       = 28;
+
+  NC_TreatStrokeAcuteAspirin                        = 29;
+  NC_TreatStrokeCare                                = 30;
+
+  NC_EliminateTransFats         = 31;
+
+  NC_Tobacco                    = 32;
+  NC_Exercise                   = 33;
+
+  //MNS
+  NC_AntiEpiBasic               = 34;
+  NC_AntiPsychBasic             = 35;
+  NC_AntiPsychInten             = 36;
+  NC_AntiDepBasic               = 37;
+  NC_PsychSocialInten           = 38;
+  NC_PerinatalPsySoc            = 39;
+  NC_AlcAssess                  = 40;
+  NC_AlcBrief                   = 41;
+  NC_AlcWithdrawl               = 42;
+  NC_AlcRelapsePrevnt           = 43;
+  NC_BiPolarStableBase          = 44;
+  NC_BiPolarStableInten         = 45;
+  NC_PrvntDepression            = 46;
+  NC_PrvntAlcohol               = 47;
+  NC_PrvntAnxiety               = 48;
+  NC_AntiDeprIntensPsychNEW     = 49;
+  NC_AntiDeprIntensPsychREC     = 50;
+
+  //COPD
+  NC_SmokingCessation           = 51;
+  NC_InhaledSalbutamol          = 52;
+  NC_LowDoseOralTheophylline    = 53;
+  NC_IpratropiumInhaler         = 54;
+  NC_Antibiotics                = 55;
+  NC_OralPrednisolone           = 56;
+  NC_OxygenConcentration24to28  = 57;
+
+  //Asthma
+  NC_InhaleShortactingBeta      = 58;
+  NC_LowDoseBeclom              = 59;
+  NC_HighDoseBeclom             = 60;
+  NC_TheopPlusBeclom            = 61;
+  NC_OralPrednisTheopPlusBeclom = 62;
+  NC_AsthmaOralPrednisolone     = 63;
+
+  //Diabetes
+  NC_StdGlycControl             = 64;
+  NC_IntsvGlycControl           = 65;
+  NC_RetinopathyScrn            = 66;
+  NC_NeuropathyScr              = 67;
+  NC_NephropathyScr             = 68;
+
+  //Cancers
+  NC_TreatmentStage0            = 69;
+  NC_TreatmentStage1            = 70;
+  NC_TreatmentStage2            = 71;
+  NC_TreatmentStage3            = 72;
+  NC_TreatmentStage4            = 73;
+  NC_TrastuzamabStage0          = 74;
+  NC_TrastuzamabStage1          = 75;
+  NC_TrastuzamabStage2          = 76;
+  NC_TrastuzamabStage3          = 77;
+  NC_PalliativeCareBasic        = 78;
+  NC_PalliativeCareExtensive    = 79;
+  NC_TreatPalBasic              = 80;
+  NC_TreatPalExtensive          = 81;
+  NC_ScreenMammogr1             = 82;
+  NC_ScreenMammogr2             = 83;
+  NC_ScreeningClinclExam        = 84;
+  NC_MoodStableBasicPsych       = 85;
+  NC_MoodStableIntensivePsych   = 86;
+  NC_FamPsychoEdu               = 87;
+  NC_MethylphenidateMed         = 88;
+  NC_AntiDepBasicPsychMild      = 89;
+  NC_AntiDepBasicPsychModerate  = 90;
+  NC_AntiDepBasicPsychSevere    = 91;
+  NC_AntiDepInten               = 92;  //Anti Depression Intensive treatment
+  NC_PAPSmear                   = 93;  //Papanicolaou Smear Positive
+  NC_HPV_DNA                    = 94;  //Human papilloma virus  Deoxyribonucleic acid
+  NC_VIA                        = 95;  //Visual Inspection with Acetic Acid
+  NC_PAPSmearP_HPV              = 96;  //Papanicolaou Smear Positive _ Human papilloma virus
+  NC_HPV_VIA                    = 97;
+  NC_Vaccination                = 98;
+  NC_AwarenessBasic             = 99;
+  NC_AwarenessExtended          = 100;
+  NC_FOBT                       = 101;
+  NC_Sigmoidoscopy              = 102;
+  NC_Colonoscopy                = 103;
+  NC_AnnFOBTSig                 = 104; //annual FOBT with Sigmoidoscopy
+
+  // interventions for ARF_RHD
+  NC_ARF_PrimaryPrevention      = 105;
+  NC_ARF_SecondaryPrevention    = 106;
+  NC_Mild_RHD_Supervision       = 107;
+  NC_RHD_ValveSurgery           = 108;
+  NC_Severe_RHD_Supervision     = 109;
+  NC_VMMC                       = 110;
+
+  NC_MaxInterv                  = 110;
+
+
+  (*RiskFactors*)
+  NC_All_Risk           = 0;
+  NC_SBP_Risk           = 1; //Systolic blood pressure
+  NC_Chol_Risk          = 2; //Cholestoral
+  NC_BMI_Risk           = 3; //Body Mass Index
+  NC_Tobacco_Risk       = 4; //Tobacco
+  NC_Household_AP_Risk  = 5; //Household air pollution
+  NC_MaxRiskFactors     = 4;
+
+
+  (*Real Risk Factors*)
+  NC_RFAll                            = 0;
+  NC_RFMeanBP                         = 1;
+  NC_RFMeanChol                       = 2; NC_RFBMI                            = 3;
+  NC_RFSmoke                          = 4;
+  NC_RFAlcohol                        = 5;
+  NC_RFInactivity                     = 6;
+  NC_RFSodiumIntake                   = 7;
+  NC_RFSaturatedFatIntake             = 8;
+  NC_RFSSBIntake                      = 9;
+  NC_RFFiberIntake                    = 10;
+  NC_RFFruitIntake                    = 11;
+  NC_RFLegumeIntake                   = 12;
+  NC_RFBreastFeeding                  = 13;
+  NC_RFHighSBP                        = 14;
+  NC_RFOverweight                     = 15;
+  NC_RFBodyWeight                     = 16;
+  NC_RF_HAP_Biomass                   = 17;
+  NC_RF_HAP_Charcoal                  = 18;
+  NC_RF_HAP_ICS_Charcoal              = 19;
+  NC_RF_HAP_ICS_chimney               = 20;
+  NC_RF_HAP_ICS_biomass_natural_draft = 21;
+  NC_RF_HAP_ICS_biomass_forced_draft  = 22;
+  NC_RF_HAP_ICS_pellet                = 23;
+  NC_RF_HAP_Kerosene                  = 24;
+  NC_RF_HAP_LPG                       = 25;
+  NC_RF_HAP_Biogas                    = 26;
+  NC_RF_HAP_Ethanol                   = 27;
+  NC_RF_HAP_Electric                  = 28;
+  NC_RFHousehold_AP  = 29;       //?
+  NC_RFMax           = 29;
+  NC_RegRFMax        = 16;
+
+
+  (*Risk Factors Diseases*)
+  NC_RFIschemicHeart    = 1;
+  NC_RFStroke           = 2;
+  NC_RFBreastCncr       = 3;
+  NC_RFCervicalCncr     = 4;
+  NC_RFColorectalCncr   = 5;
+  NC_RFLungCncr         = 6;
+  NC_RFDiabetes         = 7;
+  NC_RFAsthma           = 8;
+  NC_RFCOPD             = 9;
+  NC_RFEpilepsy         = 10;
+  NC_RFDepression       = 11;
+  NC_RFLiverCncr        = 12;
+  NC_RFOralCncr         = 13;
+  NC_RFOesophagealCncr  = 14;
+  NC_RFPancreaticCncr   = 15;
+  NC_RFLarynxCncr       = 16;
+  NC_RFLRI              = 17; //Lower Respiratory Infections
+  NC_RFHemorrStroke     = 18; //Hemorrhagic Stroke
+  NC_RFTuberculosis     = 19;
+  NC_RFHypertension     = 20;
+  NC_RFLiverCirrhosis   = 21;
+  NC_RFConduction       = 22; //Conduction Disorders
+  NC_RFPancreatitis     = 23;
+  NC_RFInjuries         = 24;//Injuries and Violins
+  NC_RFARF_RHD          = 25;
+  NC_RFBloodPressure    = 26;
+  NC_RFCholesterol      = 27;
+  NC_RFBodyMassIndex    = 28;
+  NC_RFMaxDisease       = 28;
+
+
+   (*Smoking interventions*)
+  NC_RFTobaccoPolicy             =  1;
+  NC_RFTobaccoProtect            =  2;
+  NC_RFTobaccoQuitBrief          =  3;
+  NC_RFTobaccoQuitmCessation     =  4;
+  NC_RFTobaccoWarnLabel          =  5;
+  NC_RFTobaccoWarnMassMedia      =  6;
+  NC_RFTobaccoBan                =  7;
+  NC_RFTobaccoEnforceYouth       =  8;
+  NC_RFTobaccoTax                =  9;
+  NC_RFTobaccoPackaging          = 10;
+
+  (*Alcohol interventions*)
+  NC_RFAlcoholRestrict           = 11;
+  NC_RFAlcoholBanAdvert          = 12;
+  NC_RFAlcoholBanTax             = 13;
+  NC_RFAlcoholDriveLaws          = 14;
+  NC_RFAlcoholCounsel            = 15;
+
+  (*Physical Interventions*)
+  NC_RFPhysicalActivityAwreness  = 16;
+  NC_RFPhysicalActivityAdvice    = 17;
+
+  (*Sodium Interventions*)
+  NC_RFSodiumSurveillance            = 18;
+  NC_RFSodiumReformulation           = 19;
+  NC_RFSodiumPackLabelling           = 20;
+  NC_RFSodiumMisleadingMarket        = 21;
+  NC_RFSodiumKnowledge               = 22;
+  NC_RFSodiumEnvSaltReduct           = 23;
+
+  (*TransFatIntake Interventions*)
+  NC_RFTransFatPublicProcurement        = 24;
+  NC_RFTransFatReformulation            = 25;
+  NC_RFTransFatFrontPackLabelling       = 26;
+
+  (*SSBIntake Interventions*)
+  NC_RFSSBPublicProcurement        = 27;
+  NC_RFSSBReformulation            = 28;
+  NC_RFSSBFrontPackLabelling       = 29;
+  NC_RFSSBTax                      = 30;
+
+  (*FiberIntake Interventions*)
+  NC_RFFiberPublicProcurement     = 31;
+  NC_RFFiberReformulation         = 32;
+  NC_RFFiberFrontPackLabelling    = 33;
+
+ (*NC_FruitIntake Interventions*)
+  NC_RFFruitPublicProcurement       = 34;
+  NC_RFFruitReformulation           = 35;
+  NC_RFFruitFrontPackLabelling      = 36;
+  NC_RFFruitMassMedia               = 37;
+
+  (*LegumeIntake Interventions*)
+  NC_RFLegumePublicProcurement        = 38;
+  NC_RFLegumeReformulation            = 39;
+  NC_RFLegumeFrontPackLabelling       = 40;
+  NC_RFLegumeMassMedia                = 41;
+
+  NC_RFBreastFeedingCS                = 42;
+
+  (*Obesity Interventions*)
+  NC_RFObesityKillTransFats      = 43;
+  NC_RFObesityReplaceSatFats     = 44;
+  NC_RFObesityReduceSugarTax     = 45;
+
+  (*HAP interventions*)
+  NC_RFBiomass                   = 46;
+  NC_RFCharcoal                  = 47;
+  NC_RFICS_Charcoal              = 48;
+  NC_RFICS_chimney               = 49;
+  NC_RFICS_biomass_natural_draft = 50;
+  NC_RFICS_biomass_forced_draft  = 51;
+  NC_RFICS_pellet                = 52;
+  NC_RFKerosene                  = 53;
+  NC_RFLPG                       = 54;
+  NC_RFBiogas                    = 55;
+  NC_RFEthanol                   = 56;
+  NC_RFElectric                  = 57;
+  NC_RFHousehold_AP_Intrv        = 58;
+
+  NC_RFIntervMax                 = 58;
