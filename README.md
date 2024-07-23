@@ -76,3 +76,79 @@ Coverages
 <End>,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ```
+
+
+# NCD Scenario Generator Scripts 2024-07-23 14:14
+
+This repository contains a set of scripts designed to process and analyze data related to Non-Communicable Disease (NCD) scenarios. These scripts work together to extract, transform, and map data from various input files to produce meaningful outputs for further analysis.
+
+## Script Descriptions
+
+### 1. Association Extractor (AWK)
+
+**Filename:** `extract_associations_csv_clean.awk`
+
+**Purpose:** This AWK script processes a complex, custom-formatted CSV file containing information about disease treatments and preventions.
+
+**Functionality:**
+- Identifies Treatment and Prevention Associations within the input file.
+- Extracts key information including diseaseID, association type (treatment or prevention), ID, and active status.
+- Outputs a clean CSV format with columns: diseaseID, association, id, active.
+
+**Usage:**
+```
+awk -f extract_associations_csv_clean.awk input_file.NC > associations.csv
+```
+
+### 2. Constants Extractor (AWK)
+
+**Filename:** `extract_disease_ids.awk` and `extract_treatment_ids.awk`
+
+**Purpose:** These AWK scripts process a text file containing constant definitions for diseases and treatments.
+
+**Functionality:**
+- Extracts disease IDs and names from the input file.
+- Extracts treatment IDs and names from the input file.
+- Outputs two separate CSV files: one for diseases and one for treatments.
+
+**Usage:**
+```
+awk -f extract_disease_ids.awk constants_input.txt > DiseaseID.csv
+awk -f extract_treatment_ids.awk constants_input.txt > TreatmentID.csv
+```
+
+### 3. Association Mapper (Python)
+
+**Filename:** `map_associations.py`
+
+**Purpose:** This Python script maps the extracted associations to their corresponding names using the constants files.
+
+**Functionality:**
+- Reads the associations CSV produced by the Association Extractor.
+- Reads the constants CSVs (DiseaseID.csv and TreatmentID.csv).
+- Maps the numeric IDs in the associations file to their corresponding names from the constants files.
+- Provides an option to filter results based on active status.
+- Outputs the mapped data to stdout in CSV format.
+
+**Features:**
+- Command-line flag `--all` to include both active and inactive associations (default is active only).
+- Handles missing mappings by displaying "No Mapping Available".
+- Converts the active status to readable "Active" or "Inactive" in the output.
+
+**Usage:**
+```
+python map_associations.py > mapped_active_associations.csv
+python map_associations.py --all > mapped_all_associations.csv
+```
+
+## Workflow
+
+1. Run the Association Extractor on your input .NC file to generate the associations CSV.
+2. Run the Constants Extractors on your constants input file to generate DiseaseID.csv and TreatmentID.csv.
+3. Use the Association Mapper to combine the data from steps 1 and 2, mapping IDs to names and filtering as needed.
+
+This set of scripts provides a comprehensive solution for processing complex NCD scenario data, from raw input files to a clean, mapped CSV output suitable for further analysis or reporting.
+
+---
+
+This description provides an overview of each script, its purpose, functionality, and usage instructions. It also outlines the overall workflow for using these scripts together. You can include this in your README file to give users a clear understanding of the tools available in your repository and how to use them.
