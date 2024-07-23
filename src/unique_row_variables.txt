@@ -1,0 +1,53 @@
+<Alcoholism Attributable Fraction for YLD>
+<Alcoholism Attributable Fraction V2>
+<Base Year>
+<Beer Tax record>
+<Country Specific Death AF>
+<Country Specific YLD AF>
+<Coverages>
+<DALYs Config>
+<Deaths used for Alc AF>
+<Do Equilibrium Run>
+<End>
+<Exclude Disease free from summary result>
+<Exclude NCD Modeled Risk>
+<Final Age>
+<First Age>
+<General>
+<HAP Cov>
+<HAP Inputs>
+<HAP Mort>
+<HAP PPMs>
+<HAP Prev>
+<HAP RR>
+<HAP spill over>
+<Has Cancer>
+<Health States by disease>
+<No intervention scale up>
+<No risk factor scale up>
+<PeriNatal Flag>
+<PINByYear>
+<Prevention Association>
+<Projection Valid Date>
+<RF Coverage V2 now with more levels>
+<Risk Association>
+<Risk Base Level>
+<Risk Factor Coverage Level by intervention>
+<Risk Factor Impact V3>
+<Risk Factor Prevalence>
+<Risk Factor Relative Risk>
+<Risk Factor Stata>
+<Risk Level>
+<Risk Target Level>
+<Source>
+<State Association>
+<Stop Calculations>
+<Target Year>
+<Tobacco Tax record>
+<Total Risk>
+<Treatment Association>
+<Use Regional Calculated AF>
+<Use Target Year>
+<Wine Tax record>
+<YLD States by disease>
+<YLD used for Alc AF>
