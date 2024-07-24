@@ -65,51 +65,6 @@ def create_constants_lookup(constants: List[List[str]]) -> Dict[str, Dict[str, s
     logging.info(f"Constants lookup created: {len(lookup)} categories")
     return lookup
 
-def find_block_in_nc(nc_data: List[List[str]], block_type: str, disease_id: str, treatment_id: str) -> Tuple[int, int]:
-    """Find the start and end indices of a block in the NC file."""
-    logging.info(f"Searching for block: {block_type}, DiseaseID: {disease_id}, TreatmentID: {treatment_id}")
-    start_index = -1
-    end_index = -1
-    disease_matched = False
-    treatment_matched = False
-
-    for i, row in enumerate(nc_data):
-        if row and row[0] == f"<{block_type}>":
-            start_index = i
-            disease_matched = False
-            treatment_matched = False
-            logging.info(f"Found start of {block_type} block at row {i}")
-            continue
-
-        if start_index != -1:
-            if row and row[0] == "<End>":
-                if disease_matched and treatment_matched:
-                    end_index = i
-                    logging.info(f"Found end of matching {block_type} block at row {i}")
-                    break
-                else:
-                    logging.info(f"Found end of non-matching {block_type} block at row {i}")
-                    start_index = -1
-                    continue
-
-            if len(row) > 2:
-                if row[1] == "DiseaseID" and row[2] == disease_id:
-                    logging.info(f"Matched DiseaseID {disease_id} at row {i}")
-                    disease_matched = True
-                elif row[1] == "treatID" and row[2] == treatment_id:
-                    logging.info(f"Matched treatID {treatment_id} at row {i}")
-                    treatment_matched = True
-                elif row[1] == "PreventionID" and row[2] == treatment_id:
-                    logging.info(f"Matched PreventionID {treatment_id} at row {i}")
-                    treatment_matched = True
-
-    if start_index == -1 or end_index == -1:
-        logging.warning(f"Block not found: {block_type}, DiseaseID: {disease_id}, TreatmentID: {treatment_id}")
-        return -1, -1
-
-    logging.info(f"Block found: {block_type}, Start: {start_index}, End: {end_index}")
-    return start_index, end_index
-
 def update_coverage_rates(coverages: List[str], baseline: float, target: float, start_index: int, stop_index: int) -> List[str]:
     """Update coverage rates based on the given parameters."""
     logging.info(f"Updating coverage rates: Baseline {baseline:.2f}, Target {target:.2f}, Start Index {start_index}, Stop Index {stop_index}")
@@ -125,61 +80,6 @@ def update_coverage_rates(coverages: List[str], baseline: float, target: float, 
 
     logging.info(f"Coverage rates updated: {len(updated_coverages)} values")
     return updated_coverages
-
-def process_associations(nc_data: List[List[str]], associations: List[Dict], constants_lookup: Dict[str, Dict[str, str]], block_type: str) -> List[List[str]]:
-    """Process treatment or prevention associations and update the NC data."""
-    logging.info(f"Processing {block_type}s: {len(associations)} associations")
-    for assoc in associations:
-        disease = assoc["disease"]
-        treatment_key = "treatment" if "treatment" in assoc else "prevention"
-        treatment = assoc[treatment_key]
-
-        disease_id = constants_lookup["diseaseID"].get(disease)
-        treatment_id = constants_lookup["treatmentID"].get(treatment)
-
-        if not disease_id or not treatment_id:
-            logging.warning(f"{block_type}: No match found for Disease: {disease} or {treatment_key.capitalize()}: {treatment}")
-            continue
-
-        logging.info(f"{block_type}: Processing Disease: {disease} (ID: {disease_id}), {treatment_key.capitalize()}: {treatment} (ID: {treatment_id})")
-
-        start_index, end_index = find_block_in_nc(nc_data, block_type, disease_id, treatment_id)
-        if start_index == -1 or end_index == -1:
-            logging.warning(f"{block_type}: Block not found for Disease ID: {disease_id}, {treatment_key.capitalize()} ID: {treatment_id}")
-            continue
-
-        num_impacts = 1
-        for i in range(start_index, end_index):
-            if nc_data[i][1] == "NumImpacts":
-                num_impacts = int(nc_data[i][2])
-                logging.info(f"{block_type}: Number of impacts: {num_impacts}")
-                break
-
-        coverages_updated = False
-        for i in range(start_index, end_index):
-            if nc_data[i][0] == "<Coverages>":
-                for j in range(num_impacts):
-                    coverages = nc_data[i + 1 + j][5:]
-                    updated_coverages = update_coverage_rates(
-                        coverages,
-                        assoc["baseline_coverage"] * 100,
-                        assoc["target_coverage"] * 100,
-                        assoc["scaling_start_index"],
-                        assoc["scaling_stop_index"]
-                    )
-                    nc_data[i + 1 + j] = nc_data[i + 1 + j][:5] + updated_coverages
-                    logging.info(f"{block_type}: Updated coverages for Disease ID: {disease_id}, {treatment_key.capitalize()} ID: {treatment_id}, Row: {j + 1}")
-                    logging.info(f"  Baseline: {assoc['baseline_coverage']:.2f}, Target: {assoc['target_coverage']:.2f}")
-                    logging.info(f"  Start Index: {assoc['scaling_start_index']}, Stop Index: {assoc['scaling_stop_index']}")
-                    logging.info(f"  Original coverages: {coverages}")
-                    logging.info(f"  Updated coverages: {updated_coverages}")
-                coverages_updated = True
-                break
-        
-        if not coverages_updated:
-            logging.warning(f"{block_type}: Coverages not updated for Disease ID: {disease_id}, {treatment_key.capitalize()} ID: {treatment_id}")
-
-    return nc_data
 
 def get_risk_factor_indices(mapped_risk_ids: List[List[str]], risk_factor: str, levels: List[int]) -> List[int]:
     """Get the indices for a risk factor from mapped_risk_ids.csv."""
@@ -241,6 +141,85 @@ def process_risk_factors(nc_data: List[List[str]], risk_factors: List[Dict], map
 
     return nc_data
 
+def process_nc_file(nc_data: List[List[str]], config: Dict, constants_lookup: Dict[str, Dict[str, str]], mapped_risk_ids: List[List[str]]) -> List[List[str]]:
+    """Process the NC file, updating Treatment and Prevention Associations as encountered."""
+    logging.info("Starting to process NC file")
+    
+    current_block_type = None
+    block_start_index = -1
+    
+    for i, row in enumerate(nc_data):
+        if not row:  # Skip empty rows
+            continue
+
+        if row[0] == "<Treatment Association>" or row[0] == "<Prevention Association>":
+            current_block_type = row[0][1:-1]  # Remove < and >
+            block_start_index = i
+            logging.info(f"Found start of {current_block_type} block at row {i}")
+        elif row[0] == "<End>" and current_block_type in ["Treatment Association", "Prevention Association"]:
+            process_association_block(nc_data, block_start_index, i, current_block_type, config, constants_lookup)
+            current_block_type = None
+            block_start_index = -1
+        elif row[0] == " <RF Coverage V2 now with more levels>":
+            logging.info("Found start of Risk Factor block")
+            nc_data = process_risk_factors(nc_data, config["risk factors"], mapped_risk_ids)
+            break  # Assuming risk factors are at the end of the file
+
+    logging.info("Finished processing NC file")
+    return nc_data
+
+def process_association_block(nc_data: List[List[str]], start_index: int, end_index: int, block_type: str, config: Dict, constants_lookup: Dict[str, Dict[str, str]]):
+    """Process a single Treatment or Prevention Association block."""
+    disease_id = None
+    treatment_id = None
+    num_impacts = 1
+
+    for i in range(start_index, end_index):
+        if nc_data[i][1] == "DiseaseID":
+            disease_id = nc_data[i][2]
+        elif nc_data[i][1] in ["treatID", "PreventionID"]:
+            treatment_id = nc_data[i][2]
+        elif nc_data[i][1] == "NumImpacts":
+            num_impacts = int(nc_data[i][2])
+
+        if disease_id and treatment_id:
+            break
+
+    if not disease_id or not treatment_id:
+        logging.warning(f"Invalid {block_type} block: missing DiseaseID or treatID/PreventionID")
+        return
+
+    # Look up the association in the config
+    association_type = "treatment associations" if block_type == "Treatment Association" else "prevention associations"
+    matching_assoc = next((assoc for assoc in config[association_type] 
+                           if constants_lookup["diseaseID"].get(assoc["disease"]) == disease_id
+                           and constants_lookup["treatmentID"].get(assoc.get("treatment") or assoc.get("prevention")) == treatment_id), 
+                          None)
+
+    if not matching_assoc:
+        logging.info(f"No matching configuration found for {block_type}: DiseaseID {disease_id}, TreatmentID {treatment_id}")
+        return
+
+    # Update coverages
+    for i in range(start_index, end_index):
+        if nc_data[i][0] == "<Coverages>":
+            for j in range(num_impacts):
+                coverages = nc_data[i + 1 + j][5:]
+                updated_coverages = update_coverage_rates(
+                    coverages,
+                    matching_assoc["baseline_coverage"] * 100,
+                    matching_assoc["target_coverage"] * 100,
+                    matching_assoc["scaling_start_index"],
+                    matching_assoc["scaling_stop_index"]
+                )
+                nc_data[i + 1 + j] = nc_data[i + 1 + j][:5] + updated_coverages
+                logging.info(f"Updated coverages for {block_type}: DiseaseID {disease_id}, TreatmentID {treatment_id}, Row {j + 1}")
+                logging.info(f"  Baseline: {matching_assoc['baseline_coverage']:.2f}, Target: {matching_assoc['target_coverage']:.2f}")
+                logging.info(f"  Start Index: {matching_assoc['scaling_start_index']}, Stop Index: {matching_assoc['scaling_stop_index']}")
+                logging.info(f"  Original coverages: {coverages}")
+                logging.info(f"  Updated coverages: {updated_coverages}")
+            break
+
 def main(config_path: str):
     """Main function to process the NC file based on the given configuration."""
     # Create output directory if it doesn't exist
@@ -261,9 +240,7 @@ def main(config_path: str):
     mapped_risk_ids = load_csv("./data/mapped_risk_ids.csv")
     nc_data = load_csv("./templates/foo.NC")
 
-    nc_data = process_associations(nc_data, config["treatment associations"], constants_lookup, "Treatment Association")
-    nc_data = process_associations(nc_data, config["prevention associations"], constants_lookup, "Prevention Association")
-    nc_data = process_risk_factors(nc_data, config["risk factors"], mapped_risk_ids)
+    nc_data = process_nc_file(nc_data, config, constants_lookup, mapped_risk_ids)
 
     save_csv(output_nc_path, nc_data)
     logging.info(f"Updated NC file saved to {output_nc_path}")
