@@ -1,0 +1,119 @@
+{
+  "treatment associations": [
+    {
+      "disease": "NC_mstARF_RHD",
+      "treatment": "NC_mstARF_PrimaryPrevention"
+    },
+    {
+      "disease": "NC_mstARF_RHD",
+      "treatment": "NC_mstARF_SecondaryPrevention"
+    },
+    {
+      "disease": "NC_mstARF_RHD",
+      "treatment": "NC_mstRHD_ValveSurgery"
+    },
+    {
+      "disease": "NC_mstCVD",
+      "treatment": "NC_mstAspirin"
+    },
+    {
+      "disease": "NC_mstCVD",
+      "treatment": "NC_mstAspirinAspirinAndTrombolysis"
+    },
+    {
+      "disease": "NC_mstCVD",
+      "treatment": "NC_mstAspirinAndClopidro"
+    },
+    {
+      "disease": "NC_mstCVD",
+      "treatment": "NC_mstPCIAndAspirinAndClopidro"
+    },
+    {
+      "disease": "NC_mstCVD",
+      "treatment": "NC_mstTreatMechanicalTrombStroke"
+    },
+    {
+      "disease": "NC_mstCVD",
+      "treatment": "NC_mstTreatIntravTrombStroke"
+    },
+    {
+      "disease": "NC_mstCVD",
+      "treatment": "NC_mstTreatStrokeAcuteAspirin"
+    },
+    {
+      "disease": "NC_mstCVD",
+      "treatment": "NC_mstMaxInterv"
+    },
+    {
+      "disease": "NC_mstDiabetes",
+      "treatment": "NC_mstStdGlycControl"
+    },
+    {
+      "disease": "NC_mstDiabetes",
+      "treatment": "NC_mstIntsvGlycControl"
+    },
+    {
+      "disease": "NC_mstDiabetes",
+      "treatment": "NC_mstRetinopathyScrn"
+    },
+    {
+      "disease": "NC_mstDiabetes",
+      "treatment": "NC_mstNeuropathyScr"
+    },
+    {
+      "disease": "NC_mstDiabetes",
+      "treatment": "NC_mstNephropathyScr"
+    },
+    {
+      "disease": "NC_mstCOPD",
+      "treatment": "NC_mstSmokingCessation"
+    },
+    {
+      "disease": "NC_mstCOPD",
+      "treatment": "NC_mstInhaledSalbutamol"
+    },
+    {
+      "disease": "NC_mstCOPD",
+      "treatment": "NC_mstAntibiotics"
+    },
+    {
+      "disease": "NC_mstCOPD",
+      "treatment": "NC_mstOralPrednisolone"
+    },
+    {
+      "disease": "NC_mstCOPD",
+      "treatment": "NC_mstOxygenConcentration24to28"
+    },
+    {
+      "disease": "NC_mstAsthma",
+      "treatment": "NC_mstInhaleShortactingBeta"
+    },
+    {
+      "disease": "NC_mstAsthma",
+      "treatment": "NC_mstLowDoseBeclom"
+    },
+    {
+      "disease": "NC_mstAsthma",
+      "treatment": "NC_mstHighDoseBeclom"
+    },
+    {
+      "disease": "NC_mstAsthma",
+      "treatment": "NC_mstAsthmaOralPrednisolone"
+    }
+  ],
+  "prevention associations": [
+    {
+      "disease": "NC_mstCVD",
+      "prevention": "NC_mstPreventNonDiabSBPgt140"
+    },
+    {
+      "disease": "NC_mstCVD",
+      "prevention": "NC_mstPreventDiabSBPgt130"
+    },
+    {
+      "disease": "NC_mstCVD",
+      "prevention": "NC_mstPreventDiabStatinsAgegt40"
+    }
+  ],
+  "risk factors": []
+}
