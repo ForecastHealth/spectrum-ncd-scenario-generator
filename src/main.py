@@ -68,15 +68,26 @@ def create_constants_lookup(constants: List[List[str]]) -> Dict[str, Dict[str, s
 def update_coverage_rates(coverages: List[str], baseline: float, target: float, start_index: int, stop_index: int) -> List[str]:
     """Update coverage rates based on the given parameters."""
     logging.info(f"Updating coverage rates: Baseline {baseline:.2f}, Target {target:.2f}, Start Index {start_index}, Stop Index {stop_index}")
-    updated_coverages = coverages[:start_index]
-    total_steps = stop_index - start_index
     
-    for i in range(start_index, len(coverages)):
-        if i < stop_index:
-            rate = baseline + (target - baseline) * (i - start_index + 1) / total_steps
-        else:
+    # Find the first non-empty value and the last value
+    first_non_empty = next((i for i, v in enumerate(coverages) if v), 0)
+    last_non_empty = len(coverages) - 1 - next((i for i, v in enumerate(reversed(coverages)) if v), 0)
+    
+    updated_coverages = coverages[:first_non_empty]
+    
+    for i in range(first_non_empty, len(coverages)):
+        if i <= start_index:
+            rate = baseline
+        elif i >= stop_index:
             rate = target
-        updated_coverages.append(f"{rate:.3f}")
+        else:
+            progress = (i - start_index) / (stop_index - start_index)
+            rate = baseline + (target - baseline) * progress
+        
+        if i <= last_non_empty:
+            updated_coverages.append(f"{rate:.3f}")
+        else:
+            updated_coverages.append("")
 
     logging.info(f"Coverage rates updated: {len(updated_coverages)} values")
     return updated_coverages
