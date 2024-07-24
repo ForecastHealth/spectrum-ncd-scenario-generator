@@ -181,9 +181,7 @@ def process_association_block(nc_data: List[List[str]], start_index: int, end_in
             treatment_id = nc_data[i][2]
         elif nc_data[i][1] == "NumImpacts":
             num_impacts = int(nc_data[i][2])
-
-        if disease_id and treatment_id:
-            break
+            logging.info(f"Number of impacts for this block: {num_impacts}")
 
     if not disease_id or not treatment_id:
         logging.warning(f"Invalid {block_type} block: missing DiseaseID or treatID/PreventionID")
@@ -201,24 +199,38 @@ def process_association_block(nc_data: List[List[str]], start_index: int, end_in
         return
 
     # Update coverages
+    coverages_start = -1
     for i in range(start_index, end_index):
         if nc_data[i][0] == "<Coverages>":
-            for j in range(num_impacts):
-                coverages = nc_data[i + 1 + j][5:]
-                updated_coverages = update_coverage_rates(
-                    coverages,
-                    matching_assoc["baseline_coverage"] * 100,
-                    matching_assoc["target_coverage"] * 100,
-                    matching_assoc["scaling_start_index"],
-                    matching_assoc["scaling_stop_index"]
-                )
-                nc_data[i + 1 + j] = nc_data[i + 1 + j][:5] + updated_coverages
-                logging.info(f"Updated coverages for {block_type}: DiseaseID {disease_id}, TreatmentID {treatment_id}, Row {j + 1}")
-                logging.info(f"  Baseline: {matching_assoc['baseline_coverage']:.2f}, Target: {matching_assoc['target_coverage']:.2f}")
-                logging.info(f"  Start Index: {matching_assoc['scaling_start_index']}, Stop Index: {matching_assoc['scaling_stop_index']}")
-                logging.info(f"  Original coverages: {coverages}")
-                logging.info(f"  Updated coverages: {updated_coverages}")
+            coverages_start = i + 1
             break
+
+    if coverages_start == -1:
+        logging.warning(f"No <Coverages> section found in {block_type} block: DiseaseID {disease_id}, TreatmentID {treatment_id}")
+        return
+
+    for j in range(num_impacts):
+        current_row = coverages_start + j
+        if current_row >= end_index:
+            logging.warning(f"Unexpected end of block while processing coverages: DiseaseID {disease_id}, TreatmentID {treatment_id}")
+            break
+
+        coverages = nc_data[current_row][5:]
+        updated_coverages = update_coverage_rates(
+            coverages,
+            matching_assoc["baseline_coverage"] * 100,
+            matching_assoc["target_coverage"] * 100,
+            matching_assoc["scaling_start_index"],
+            matching_assoc["scaling_stop_index"]
+        )
+        nc_data[current_row] = nc_data[current_row][:5] + updated_coverages
+        logging.info(f"Updated coverages for {block_type}: DiseaseID {disease_id}, TreatmentID {treatment_id}, Impact {j + 1} of {num_impacts}")
+        logging.info(f"  Baseline: {matching_assoc['baseline_coverage']:.2f}, Target: {matching_assoc['target_coverage']:.2f}")
+        logging.info(f"  Start Index: {matching_assoc['scaling_start_index']}, Stop Index: {matching_assoc['scaling_stop_index']}")
+        logging.info(f"  Original coverages: {coverages}")
+        logging.info(f"  Updated coverages: {updated_coverages}")
+
+    logging.info(f"Finished processing {block_type} block: DiseaseID {disease_id}, TreatmentID {treatment_id}")
 
 def main(config_path: str):
     """Main function to process the NC file based on the given configuration."""
