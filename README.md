@@ -89,7 +89,3 @@ Detailed logs of the processing are saved alongside the output files in the `./t
 ## Contributing
 
 For bug reports or feature requests, please open an issue on the project's GitHub repository.
-
-## License
-
-[Specify your license here]
