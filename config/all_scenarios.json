@@ -12,7 +12,7 @@
       "disease": "NC_mstARF_RHD",
       "treatment": "NC_mstARF_SecondaryPrevention",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -20,7 +20,7 @@
       "disease": "NC_mstARF_RHD",
       "treatment": "NC_mstRHD_ValveSurgery",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -28,7 +28,7 @@
       "disease": "NC_mstCVD",
       "treatment": "NC_mstAspirin",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -36,7 +36,7 @@
       "disease": "NC_mstCVD",
       "treatment": "NC_mstAspirinAspirinAndTrombolysis",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -44,7 +44,7 @@
       "disease": "NC_mstCVD",
       "treatment": "NC_mstAspirinAndClopidro",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -52,7 +52,7 @@
       "disease": "NC_mstCVD",
       "treatment": "NC_mstPCIAndAspirinAndClopidro",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -60,7 +60,7 @@
       "disease": "NC_mstCVD",
       "treatment": "NC_mstTreatMechanicalTrombStroke",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -68,7 +68,7 @@
       "disease": "NC_mstCVD",
       "treatment": "NC_mstTreatIntravTrombStroke",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -76,7 +76,7 @@
       "disease": "NC_mstCVD",
       "treatment": "NC_mstTreatStrokeAcuteAspirin",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -84,7 +84,7 @@
       "disease": "NC_mstDiabetes",
       "treatment": "NC_mstStdGlycControl",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -92,7 +92,7 @@
       "disease": "NC_mstDiabetes",
       "treatment": "NC_mstIntsvGlycControl",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -100,7 +100,7 @@
       "disease": "NC_mstDiabetes",
       "treatment": "NC_mstRetinopathyScrn",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -108,7 +108,7 @@
       "disease": "NC_mstDiabetes",
       "treatment": "NC_mstNeuropathyScr",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -116,7 +116,7 @@
       "disease": "NC_mstDiabetes",
       "treatment": "NC_mstNephropathyScr",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -124,7 +124,7 @@
       "disease": "NC_mstCOPD",
       "treatment": "NC_mstSmokingCessation",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -132,7 +132,7 @@
       "disease": "NC_mstCOPD",
       "treatment": "NC_mstInhaledSalbutamol",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -140,7 +140,7 @@
       "disease": "NC_mstCOPD",
       "treatment": "NC_mstAntibiotics",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -148,7 +148,7 @@
       "disease": "NC_mstCOPD",
       "treatment": "NC_mstOralPrednisolone",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -156,7 +156,7 @@
       "disease": "NC_mstCOPD",
       "treatment": "NC_mstOxygenConcentration24to28",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -164,7 +164,7 @@
       "disease": "NC_mstAsthma",
       "treatment": "NC_mstInhaleShortactingBeta",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -172,7 +172,7 @@
       "disease": "NC_mstAsthma",
       "treatment": "NC_mstLowDoseBeclom",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -180,7 +180,7 @@
       "disease": "NC_mstAsthma",
       "treatment": "NC_mstHighDoseBeclom",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -188,7 +188,7 @@
       "disease": "NC_mstAsthma",
       "treatment": "NC_mstAsthmaOralPrednisolone",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     }
@@ -198,7 +198,7 @@
       "disease": "NC_mstCVD",
       "prevention": "NC_mstPreventNonDiabSBPgt140",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -206,7 +206,7 @@
       "disease": "NC_mstCVD",
       "prevention": "NC_mstPreventDiabSBPgt130",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     },
@@ -214,7 +214,7 @@
       "disease": "NC_mstCVD",
       "prevention": "NC_mstPreventDiabStatinsAgegt40",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3
     }
@@ -223,7 +223,7 @@
     {
       "risk factor": "NC_mstRFTobaccoPolicy",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -231,7 +231,7 @@
     {
       "risk factor": "NC_mstRFTobaccoProtect",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -239,7 +239,7 @@
     {
       "risk factor": "NC_mstRFTobaccoQuitBrief",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -247,7 +247,7 @@
     {
       "risk factor": "NC_mstRFTobaccoQuitmCessation",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -255,7 +255,7 @@
     {
       "risk factor": "NC_mstRFTobaccoWarnLabel",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -263,7 +263,7 @@
     {
       "risk factor": "NC_mstRFTobaccoWarnMassMedia",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -271,7 +271,7 @@
     {
       "risk factor": "NC_mstRFTobaccoBan",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -279,7 +279,7 @@
     {
       "risk factor": "NC_mstRFTobaccoEnforceYouth",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -287,7 +287,7 @@
     {
       "risk factor": "NC_mstRFTobaccoTax",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -295,7 +295,7 @@
     {
       "risk factor": "NC_mstRFTobaccoPackaging",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -303,7 +303,7 @@
     {
       "risk factor": "NC_mstRFAlcoholRestrict",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -311,7 +311,7 @@
     {
       "risk factor": "NC_mstRFAlcoholBanAdvert",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -319,7 +319,7 @@
     {
       "risk factor": "NC_mstRFAlcoholBanTax",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -327,7 +327,7 @@
     {
       "risk factor": "NC_mstRFAlcoholDriveLaws",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -335,7 +335,7 @@
     {
       "risk factor": "NC_mstRFAlcoholCounsel",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -343,7 +343,7 @@
     {
       "risk factor": "NC_mstRFPhysicalActivityAwreness",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -351,7 +351,7 @@
     {
       "risk factor": "NC_mstRFPhysicalActivityAdvice",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -359,7 +359,7 @@
     {
       "risk factor": "NC_mstRFSodiumSurveillance",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -367,7 +367,7 @@
     {
       "risk factor": "NC_mstRFSodiumReformulation",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -375,7 +375,7 @@
     {
       "risk factor": "NC_mstRFSodiumPackLabelling",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -383,7 +383,7 @@
     {
       "risk factor": "NC_mstRFSodiumMisleadingMarket",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -391,7 +391,7 @@
     {
       "risk factor": "NC_mstRFSodiumKnowledge",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -399,7 +399,7 @@
     {
       "risk factor": "NC_mstRFSodiumEnvSaltReduct",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -407,7 +407,7 @@
     {
       "risk factor": "NC_mstRFObesityKillTransFats",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -415,7 +415,7 @@
     {
       "risk factor": "NC_mstRFObesityReplaceSatFats",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -423,7 +423,7 @@
     {
       "risk factor": "NC_mstRFObesityReduceSugarTax",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -431,7 +431,7 @@
     {
       "risk factor": "NC_mstRFTransfatPublicProcurement",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -439,7 +439,7 @@
     {
       "risk factor": "NC_mstRFTransfatReformulation",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -447,7 +447,7 @@
     {
       "risk factor": "NC_mstRFTransfatFrontPackLabelling",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -455,7 +455,7 @@
     {
       "risk factor": "NC_mstRFSSBPublicProcurement",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -463,7 +463,7 @@
     {
       "risk factor": "NC_mstRFSSBReformulation",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -471,7 +471,7 @@
     {
       "risk factor": "NC_mstRFSSBFrontPackLabelling",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -479,7 +479,7 @@
     {
       "risk factor": "NC_mstRFSSBTax",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -487,7 +487,7 @@
     {
       "risk factor": "NC_mstRFFiberPublicProcurement",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -495,7 +495,7 @@
     {
       "risk factor": "NC_mstRFFiberReformulation",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -503,7 +503,7 @@
     {
       "risk factor": "NC_mstRFFiberFrontPackLabelling",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -511,7 +511,7 @@
     {
       "risk factor": "NC_mstRFFruitPublicProcurement",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -519,7 +519,7 @@
     {
       "risk factor": "NC_mstRFFruitReformulation",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -527,7 +527,7 @@
     {
       "risk factor": "NC_mstRFFruitFrontPackLabelling",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -535,7 +535,7 @@
     {
       "risk factor": "NC_mstRFFruitMassMedia",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -543,7 +543,7 @@
     {
       "risk factor": "NC_mstRFLegumePublicProcurement",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -551,7 +551,7 @@
     {
       "risk factor": "NC_mstRFLegumeReformulation",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -559,7 +559,7 @@
     {
       "risk factor": "NC_mstRFLegumeFrontPackLabelling",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -567,7 +567,7 @@
     {
       "risk factor": "NC_mstRFLegumeMassMedia",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
@@ -575,7 +575,7 @@
     {
       "risk factor": "NC_mstRFBreastFeedingCS",
       "baseline_coverage": 0.05,
-      "target_coverage": 0.05,
+      "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
       "levels": [1,2,3,4]
