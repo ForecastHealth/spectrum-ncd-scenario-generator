@@ -253,11 +253,15 @@ def process_nc_content(nc_content: List[List[str]], config_path: str) -> List[Li
 
     return process_nc_file(nc_content, config, constants_lookup, mapped_risk_ids)
 
-def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str):
+def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_filename: str = None):
     """Process a PJNZ file, update its NC content, and create a new PJNZ file."""
     config_name = os.path.splitext(os.path.basename(config_path))[0]
     pjnz_filename = os.path.basename(pjnz_path)
-    output_filename = f"{os.path.splitext(pjnz_filename)[0]}_{config_name}.PJNZ"
+    
+    if output_filename:
+        output_filename = f"{output_filename}.PJNZ"
+    else:
+        output_filename = f"{os.path.splitext(pjnz_filename)[0]}_{config_name}.PJNZ"
     
     setup_logging(os.path.join(output_dir, f"{output_filename}.log"))
     
