@@ -16,10 +16,10 @@ def get_iso3_codes():
 
 def get_base_coverage(income_status):
     coverage_map = {
-        'Low income': 5,
-        'Lower middle income': 7.5,
-        'Upper middle income': 10,
-        'High income': 15
+        'Low income': 0.5,
+        'Lower middle income': 0.75,
+        'Upper middle income': 0.1,
+        'High income': 0.15
     }
     return coverage_map.get(income_status, 5)  # Default to 5 if not found
 
