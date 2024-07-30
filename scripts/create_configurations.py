@@ -4,6 +4,7 @@ import csv
 from country_metadata import get_tag
 
 TARGET_RATE = 95
+TEMPLATE_DIRECTORY = "./examples"  # Where the country PJZN are
 
 def get_iso3_codes():
     iso3_codes = {}
@@ -42,7 +43,7 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, targe
     
     # Add metadata
     config['metadata'] = {
-        "pjnz_filename": filename,
+        "pjnz_filename": f"{TEMPLATE_DIRECTORY}/{filename}",
         "iso3": iso3_code,
         "country": country,
         "scenario": config_type
@@ -56,7 +57,7 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, targe
 def main():
     iso3_codes = get_iso3_codes()
     
-    for filename in os.listdir('examples'):
+    for filename in os.listdir(TEMPLATE_DIRECTORY):
         if filename.endswith('.PJNZ'):
             country = filename[:-5]  # Remove .PJNZ extension
             if country in iso3_codes:
