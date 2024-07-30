@@ -28,7 +28,7 @@ def process_country(country, iso3_code, filename):
     if base_coverage is None:
         base_coverage = get_base_coverage("Low income")
     
-    with open('config/archived/baseline.json', 'r') as f:
+    with open('config/template.json', 'r') as f:
         baseline_config = json.load(f)
     
     create_config(filename, iso3_code, country, baseline_config, base_coverage, base_coverage, "baseline")
