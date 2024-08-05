@@ -1,0 +1,119 @@
+{
+  "treatment associations": [
+    {
+      "disease": "NC_mstARF_RHD",
+      "treatment": "NC_mstARF_SecondaryPrevention",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3
+    },
+    {
+      "disease": "NC_mstAsthma",
+      "treatment": "NC_mstAsthmaOralPrednisolone",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3
+    },
+    {
+      "disease": "NC_mstCOPD",
+      "treatment": "NC_mstOralPrednisolone",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3
+    },
+    {
+      "disease": "NC_mstCOPD",
+      "treatment": "NC_mstInhaledSalbutamol",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3
+    }
+  ],
+  "prevention associations": [],
+  "risk factors": [
+    {
+      "risk factor": "NC_mstRFPhysicalActivityAwreness",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [1,2,3,4]
+    },
+    {
+      "risk factor": "NC_mstRFAlcoholBanTax",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [1,2,3,4]
+    },
+    {
+      "risk factor": "NC_mstRFAlcoholBanAdvert",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [1,2,3,4]
+    },
+    {
+      "risk factor": "NC_mstRFAlcoholRestrict",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [1,2,3,4]
+    },
+    {
+      "risk factor": "NC_mstRFTobaccoTax",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [1,2,3,4]
+    },
+    {
+      "risk factor": "NC_mstRFTobaccoPackaging",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [1,2,3,4]
+    },
+    {
+      "risk factor": "NC_mstRFTobaccoBan",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [1,2,3,4]
+    },
+    {
+      "risk factor": "NC_mstRFTobaccoProtect",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [1,2,3,4]
+    },
+    {
+      "risk factor": "NC_mstRFTobaccoWarnMassMedia",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [1,2,3,4]
+    },
+    {
+      "risk factor": "NC_mstRFTobaccoQuitmCessation",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [1,2,3,4]
+    }
+  ]
+}
