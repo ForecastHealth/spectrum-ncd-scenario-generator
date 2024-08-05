@@ -31,7 +31,7 @@ def process_country(country, iso3_code, filename, template_config, scenario):
     create_config(filename, iso3_code, country, template_config, base_coverage, base_coverage, "baseline", scenario)
     create_config(filename, iso3_code, country, template_config, base_coverage, TARGET_RATE, "scaleup", scenario)
 
-def create_config(filename, iso3_code, country, config, baseline_coverage, target_coverage, config_type, scenario):
+def create_config(filename, iso3_code, country, config, baseline_coverage, target_coverage, scaleup_type, scenario):
     for association_type in ['treatment associations', 'prevention associations']:
         for association in config[association_type]:
             association['baseline_coverage'] = baseline_coverage
@@ -43,12 +43,12 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, targe
         "iso3": iso3_code,
         "country": country,
         "scenario": scenario,
-        "config_type": config_type
+        "scaleup_type": scaleup_type
     }
     
-    output_dir = f'./config/{scenario}/{config_type}'
+    output_dir = f'./config/{scenario}/{scaleup_type}'
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, f'{iso3_code}_{scenario}_{config_type}.json')
+    output_path = os.path.join(output_dir, f'{iso3_code}_{scenario}_{scaleup_type}.json')
     
     with open(output_path, 'w') as f:
         json.dump(config, f, indent=2)
