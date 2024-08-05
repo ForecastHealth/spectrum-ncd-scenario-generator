@@ -48,7 +48,7 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, targe
     
     output_dir = f'./config/{scenario}/{config_type}'
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, f'{country}_{scenario}_{config_type}.json')
+    output_path = os.path.join(output_dir, f'{iso3_code}_{scenario}_{config_type}.json')
     
     with open(output_path, 'w') as f:
         json.dump(config, f, indent=2)
