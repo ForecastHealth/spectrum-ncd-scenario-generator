@@ -1,0 +1,14 @@
+{
+  "treatment associations": [
+    {
+      "disease": "NC_mstAsthma",
+      "treatment": "NC_mstAsthmaOralPrednisolone",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3
+    }
+  ],
+  "prevention associations": [],
+  "risk factors": []
+}
