@@ -4,7 +4,7 @@
 PJNZ_DIR="./examples"
 
 # Directory containing configuration files
-CONFIG_DIR="./config"
+CONFIG_DIR="./templates"
 
 # Output directory
 OUTPUT_DIR="./tmp"
