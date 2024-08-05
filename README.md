@@ -59,6 +59,48 @@ Example:
 python -m src.main nc ./data/example.NC ./config/all_scenarios.json
 ```
 
+## Running the tool for multiple countries and scenarios
+
+This repository contains scripts for processing configuration templates and generating outputs. Here's a quick guide on how to use it:
+
+### Main Components
+
+1. `create_and_run_configurations.sh`: The main shell script that orchestrates the entire process.
+2. `scripts/create_configurations.py`: Python script for creating configurations from templates.
+3. `scripts/batch_individual_json_configs.sh`: Shell script for processing individual JSON configs.
+
+### How to Run
+
+1. Open a terminal and navigate to the repository root.
+
+2. Run the main script:
+   ```
+   ./create_and_run_configurations.sh
+   ```
+
+3. Follow the prompts to select a configuration template.
+
+### What Happens
+
+1. The script lists available templates from `./templates/*.json`.
+2. You select a template.
+3. The script runs `python -m scripts.create_configurations` with your selected template.
+4. It then processes the baseline configurations using `./scripts/batch_individual_json_configs.sh`.
+5. Finally, it processes the scaleup configurations using the same script.
+
+### Directory Structure
+
+- Templates: `./templates/*.json`
+- Output: `./config/{scenario}/{config_type}/`
+
+### Tips
+
+- Ensure all scripts are executable (`chmod +x script_name.sh`).
+- Check that Python and required dependencies are installed.
+- Make sure your template JSON files are in the `./templates/` directory.
+
+Remember, this script automates the entire process from template selection to final output generation. If you need to run individual steps, you can use the component scripts directly.
+
 ## Output
 
 The tool will generate the following outputs in the `./tmp` directory:
@@ -89,3 +131,4 @@ Detailed logs of the processing are saved alongside the output files in the `./t
 ## Contributing
 
 For bug reports or feature requests, please open an issue on the project's GitHub repository.
+
