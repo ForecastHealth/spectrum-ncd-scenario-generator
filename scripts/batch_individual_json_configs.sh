@@ -24,6 +24,7 @@ for config_file in "$CONFIG_DIR"/*.json; do
     pjnz_filename=$(jq -r '.metadata.pjnz_filename' "$config_file")
     iso3=$(jq -r '.metadata.iso3 // empty' "$config_file")
     scenario=$(jq -r '.metadata.scenario // empty' "$config_file")
+    scaleup_type=$(jq -r '.metadata.scaleup_type // empty' "$config_file")
 
     # Check if all required metadata is present
     if [ -z "$pjnz_filename" ]; then
@@ -41,9 +42,9 @@ for config_file in "$CONFIG_DIR"/*.json; do
     fi
 
     # Construct the output filename
-    if [ -n "$iso3" ] && [ -n "$scenario" ]; then
-        output_filename="${iso3}_${scenario}"
-        echo "Processing: $iso3 ($scenario)"
+    if [ -n "$iso3" ] && [ -n "$scenario" ] && [ -n "$scaleup_type" ]; then
+        output_filename="${iso3}_${scenario}_${scaleup_type}"
+        echo "Processing: $iso3 ($scenario, $scaleup_type)"
         python -m src.main pjnz "$pjnz_path" "$config_file" "$output_filename"
     else
         echo "Processing: $pjnz_filename"
