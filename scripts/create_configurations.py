@@ -1,11 +1,11 @@
 import os
 import json
 import csv
+import argparse
 from country_metadata import get_tag
 
 TARGET_RATE = 0.95
 COUNTRY_PROJECTIONS_DIR = "./examples"  # Where the country PJZN are
-CONFIG_TEMPLATE_FILEPATH = "./templates/cv5b.json"
 
 def get_iso3_codes():
     iso3_codes = {}
@@ -22,16 +22,11 @@ def get_base_coverage(income_status):
         'Upper middle income': 0.1,
         'High income': 0.15
     }
-    return coverage_map.get(income_status, 5)  # Default to 5 if not found
+    return coverage_map.get(income_status, 0.05)  # Default to 0.05 if not found
 
-def process_country(country, iso3_code, filename):
+def process_country(country, iso3_code, filename, template_config):
     income_status = get_tag(iso3_code, "wb_income")
     base_coverage = get_base_coverage(income_status)
-    if base_coverage is None:
-        base_coverage = get_base_coverage("Low income")
-    
-    with open(CONFIG_TEMPLATE_FILEPATH, 'r') as f:
-        template_config = json.load(f)
     
     create_config(filename, iso3_code, country, template_config, base_coverage, base_coverage, "baseline")
     create_config(filename, iso3_code, country, template_config, base_coverage, TARGET_RATE, "scaleup")
@@ -55,16 +50,23 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, targe
     with open(output_path, 'w') as f:
         json.dump(config, f, indent=2)
 
-def main():
+def main(template_config_path):
+    with open(template_config_path, 'r') as f:
+        template_config = json.load(f)
+
     iso3_codes = get_iso3_codes()
     
     for filename in os.listdir(COUNTRY_PROJECTIONS_DIR):
         if filename.endswith('.PJNZ'):
             country = filename[:-5]  # Remove .PJNZ extension
             if country in iso3_codes:
-                process_country(country, iso3_codes[country], filename)
+                process_country(country, iso3_codes[country], filename, template_config)
             else:
                 print(f"Warning: ISO3 code not found for {country}")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Process country data with a given template configuration.")
+    parser.add_argument("template_config", help="Path to the template configuration JSON file")
+    args = parser.parse_args()
+    
+    main(args.template_config)
