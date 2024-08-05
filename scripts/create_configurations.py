@@ -24,14 +24,14 @@ def get_base_coverage(income_status):
     }
     return coverage_map.get(income_status, 0.05)  # Default to 0.05 if not found
 
-def process_country(country, iso3_code, filename, template_config):
+def process_country(country, iso3_code, filename, template_config, scenario):
     income_status = get_tag(iso3_code, "wb_income")
     base_coverage = get_base_coverage(income_status)
     
-    create_config(filename, iso3_code, country, template_config, base_coverage, base_coverage, "baseline")
-    create_config(filename, iso3_code, country, template_config, base_coverage, TARGET_RATE, "scaleup")
+    create_config(filename, iso3_code, country, template_config, base_coverage, base_coverage, "baseline", scenario)
+    create_config(filename, iso3_code, country, template_config, base_coverage, TARGET_RATE, "scaleup", scenario)
 
-def create_config(filename, iso3_code, country, config, baseline_coverage, target_coverage, config_type):
+def create_config(filename, iso3_code, country, config, baseline_coverage, target_coverage, config_type, scenario):
     for association_type in ['treatment associations', 'prevention associations']:
         for association in config[association_type]:
             association['baseline_coverage'] = baseline_coverage
@@ -42,25 +42,37 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, targe
         "pjnz_filename": f"{COUNTRY_PROJECTIONS_DIR}/{filename}",
         "iso3": iso3_code,
         "country": country,
-        "scenario": config_type
+        "scenario": scenario,
+        "config_type": config_type
     }
     
-    output_path = f'./config/{config_type}/{country}_{config_type}.json'
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    output_dir = f'./config/{scenario}/{config_type}'
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, f'{country}_{scenario}_{config_type}.json')
+    
     with open(output_path, 'w') as f:
         json.dump(config, f, indent=2)
+
+def extract_scenario_from_filename(filename):
+    # Assuming the filename format is something like "template_configXXX.json"
+    # where XXX is the scenario
+    base_name = os.path.basename(filename)
+    scenario = base_name.split('_')[-1].split('.')[0]
+    return scenario
 
 def main(template_config_path):
     with open(template_config_path, 'r') as f:
         template_config = json.load(f)
 
+    scenario = extract_scenario_from_filename(template_config_path)
+    
     iso3_codes = get_iso3_codes()
     
     for filename in os.listdir(COUNTRY_PROJECTIONS_DIR):
         if filename.endswith('.PJNZ'):
             country = filename[:-5]  # Remove .PJNZ extension
             if country in iso3_codes:
-                process_country(country, iso3_codes[country], filename, template_config)
+                process_country(country, iso3_codes[country], filename, template_config, scenario)
             else:
                 print(f"Warning: ISO3 code not found for {country}")
 
