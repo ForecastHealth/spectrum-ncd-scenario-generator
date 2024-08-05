@@ -3,8 +3,9 @@ import json
 import csv
 from country_metadata import get_tag
 
-TARGET_RATE = 95
-TEMPLATE_DIRECTORY = "./examples"  # Where the country PJZN are
+TARGET_RATE = 0.95
+COUNTRY_PROJECTIONS_DIR = "./examples"  # Where the country PJZN are
+CONFIG_TEMPLATE_FILEPATH = "./templates/cv5b.json"
 
 def get_iso3_codes():
     iso3_codes = {}
@@ -29,11 +30,11 @@ def process_country(country, iso3_code, filename):
     if base_coverage is None:
         base_coverage = get_base_coverage("Low income")
     
-    with open('config/template.json', 'r') as f:
-        baseline_config = json.load(f)
+    with open(CONFIG_TEMPLATE_FILEPATH, 'r') as f:
+        template_config = json.load(f)
     
-    create_config(filename, iso3_code, country, baseline_config, base_coverage, base_coverage, "baseline")
-    create_config(filename, iso3_code, country, baseline_config, base_coverage, TARGET_RATE, "scaleup")
+    create_config(filename, iso3_code, country, template_config, base_coverage, base_coverage, "baseline")
+    create_config(filename, iso3_code, country, template_config, base_coverage, TARGET_RATE, "scaleup")
 
 def create_config(filename, iso3_code, country, config, baseline_coverage, target_coverage, config_type):
     for association_type in ['treatment associations', 'prevention associations']:
@@ -43,7 +44,7 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, targe
     
     # Add metadata
     config['metadata'] = {
-        "pjnz_filename": f"{TEMPLATE_DIRECTORY}/{filename}",
+        "pjnz_filename": f"{COUNTRY_PROJECTIONS_DIR}/{filename}",
         "iso3": iso3_code,
         "country": country,
         "scenario": config_type
@@ -57,7 +58,7 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, targe
 def main():
     iso3_codes = get_iso3_codes()
     
-    for filename in os.listdir(TEMPLATE_DIRECTORY):
+    for filename in os.listdir(COUNTRY_PROJECTIONS_DIR):
         if filename.endswith('.PJNZ'):
             country = filename[:-5]  # Remove .PJNZ extension
             if country in iso3_codes:
