@@ -1,0 +1,66 @@
+{
+  "treatment associations": [],
+  "prevention associations": [],
+  "risk factors": [
+    {
+      "risk factor": "NC_mstRFSodiumPackLabelling",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [
+        1
+      ]
+    },
+    {
+      "risk factor": "NC_mstRFTransfatFrontPackLabelling",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [
+        1
+      ]
+    },
+    {
+      "risk factor": "NC_mstRFSSBFrontPackLabelling",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [
+        1
+      ]
+    },
+    {
+      "risk factor": "NC_mstRFFiberFrontPackLabelling",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [
+        1
+      ]
+    },
+    {
+      "risk factor": "NC_mstRFFruitFrontPackLabelling",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [
+        1
+      ]
+    },
+    {
+      "risk factor": "NC_mstRFLegumeFrontPackLabelling",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [
+        1
+      ]
+    }
+  ]
+}
