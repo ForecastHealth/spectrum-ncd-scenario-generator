@@ -3,7 +3,7 @@
   "prevention associations": [],
   "risk factors": [
     {
-      "risk factor": "NC_mstRFSodiumKnowledge",
+      "risk factor": "NC_mstRFFruitMassMedia",
       "baseline_coverage": 0.05,
       "target_coverage": 0.95,
       "scaling_start_index": 1,
