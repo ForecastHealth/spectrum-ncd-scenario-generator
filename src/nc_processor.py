@@ -1,4 +1,5 @@
 import json
+import io
 import csv
 import logging
 from typing import Dict, List
@@ -254,7 +255,7 @@ def process_nc_content(nc_content: List[List[str]], config_path: str) -> List[Li
     return process_nc_file(nc_content, config, constants_lookup, mapped_risk_ids)
 
 def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_filename: str = None):
-    """Process a PJNZ file, update its NC content, and create a new PJNZ file."""
+    """Process a PJNZ file, update its NC content, and create a new compressed PJNZ file."""
     config_name = os.path.splitext(os.path.basename(config_path))[0]
     pjnz_filename = os.path.basename(pjnz_path)
     
@@ -272,14 +273,16 @@ def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_
     updated_nc_content = process_nc_content(nc_content, config_path)
 
     output_pjnz_path = os.path.join(output_dir, output_filename)
-    with zipfile.ZipFile(output_pjnz_path, 'w') as new_pjnz_file:
+    with zipfile.ZipFile(output_pjnz_path, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as new_pjnz_file:
         for item in zipfile.ZipFile(pjnz_path, 'r').infolist():
             if item.filename == nc_filename:
-                new_pjnz_file.writestr(item.filename, '\n'.join([','.join(row) for row in updated_nc_content]))
+                nc_data = io.StringIO()
+                csv.writer(nc_data).writerows(updated_nc_content)
+                new_pjnz_file.writestr(item.filename, nc_data.getvalue(), compress_type=zipfile.ZIP_DEFLATED)
             else:
-                new_pjnz_file.writestr(item, zipfile.ZipFile(pjnz_path, 'r').read(item.filename))
+                new_pjnz_file.writestr(item, zipfile.ZipFile(pjnz_path, 'r').read(item.filename), compress_type=zipfile.ZIP_DEFLATED)
 
-    logging.info(f"Updated PJNZ file saved to {output_pjnz_path}")
+    logging.info(f"Updated and compressed PJNZ file saved to {output_pjnz_path}")
 
 def process_nc_file_direct(nc_path: str, config_path: str, output_dir: str):
     """Process an NC file directly and output the updated NC file."""
