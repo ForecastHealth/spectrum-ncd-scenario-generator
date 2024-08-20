@@ -6,17 +6,22 @@ from typing import Dict, List
 import os
 import zipfile
 
-def setup_logging(log_file_path: str):
-    """Set up logging to both console and file."""
-    os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
-    
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s - %(levelname)s - %(message)s',
-                        handlers=[
-                            logging.FileHandler(log_file_path, mode='w'),
-                            logging.StreamHandler()
-                        ])
-    logging.info(f"Logging initialized. Log file: {log_file_path}")
+def setup_logging(log_file_path: str, enable_logging: bool):
+    """Set up logging to both console and file if enabled."""
+    if enable_logging:
+        os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
+        
+        logging.basicConfig(level=logging.INFO,
+                            format='%(asctime)s - %(levelname)s - %(message)s',
+                            handlers=[
+                                logging.FileHandler(log_file_path, mode='w'),
+                                logging.StreamHandler()
+                            ])
+        logging.info(f"Logging initialized. Log file: {log_file_path}")
+    else:
+        logging.basicConfig(level=logging.INFO,
+                            format='%(asctime)s - %(levelname)s - %(message)s',
+                            handlers=[logging.NullHandler()])
 
 def load_config(config_path: str) -> Dict:
     """Load and return the JSON configuration file."""
@@ -254,7 +259,7 @@ def process_nc_content(nc_content: List[List[str]], config_path: str) -> List[Li
 
     return process_nc_file(nc_content, config, constants_lookup, mapped_risk_ids)
 
-def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_filename: str = None):
+def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_filename: str = None, enable_logging: bool = False):
     """Process a PJNZ file, update its NC content, and create a new compressed PJNZ file."""
     config_name = os.path.splitext(os.path.basename(config_path))[0]
     pjnz_filename = os.path.basename(pjnz_path)
@@ -264,7 +269,8 @@ def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_
     else:
         output_filename = f"{os.path.splitext(pjnz_filename)[0]}_{config_name}.PJNZ"
     
-    setup_logging(os.path.join(output_dir, f"{output_filename}.log"))
+    log_file_path = os.path.join(output_dir, f"{output_filename}.log")
+    setup_logging(log_file_path, enable_logging)
     
     with zipfile.ZipFile(pjnz_path, 'r') as pjnz_file:
         nc_filename = next(name for name in pjnz_file.namelist() if name.endswith('.NC'))
@@ -284,11 +290,12 @@ def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_
 
     logging.info(f"Updated and compressed PJNZ file saved to {output_pjnz_path}")
 
-def process_nc_file_direct(nc_path: str, config_path: str, output_dir: str):
+def process_nc_file_direct(nc_path: str, config_path: str, output_dir: str, enable_logging: bool = False):
     """Process an NC file directly and output the updated NC file."""
     output_filename = os.path.splitext(os.path.basename(config_path))[0]
     output_nc_path = os.path.join(output_dir, f"{output_filename}.NC")
-    setup_logging(os.path.join(output_dir, f"{output_filename}.log"))
+    log_file_path = os.path.join(output_dir, f"{output_filename}.log")
+    setup_logging(log_file_path, enable_logging)
 
     nc_content = load_csv(nc_path)
     updated_nc_content = process_nc_content(nc_content, config_path)
