@@ -53,4 +53,26 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "All processing complete."
+# Handle ExtractConfig.EX
+echo "Updating ExtractConfig.EX for scenario $scenario..."
+
+# Copy and rename ExtractConfig.EX
+cp ./templates/ExtractConfig.EX "./tmp/$scenario/$scenario.EX"
+
+# Count the number of .PJNZ files in the scenario directory
+file_count=$(find "./tmp/$scenario" -name "*.PJNZ" | wc -l)
+
+# Update the number of chosen projections and add filenames
+sed -i "s/Number of chosen projections: ,1/Number of chosen projections: ,$file_count/" "./tmp/$scenario/$scenario.EX"
+
+# Remove existing chosen projections
+sed -i '/^,C:\\Users\\Administrator\\Documents\\/d' "./tmp/$scenario/$scenario.EX"
+
+# Add new chosen projections
+for file in "./tmp/$scenario"/*.PJNZ; do
+    filename=$(basename "$file")
+    echo ",C:\\Users\\Administrator\\Documents\\$scenario\\$filename" >> "./tmp/$scenario/$scenario.EX"
+done
+
+echo "All processing complete. Output files are located in tmp/$scenario/"
+echo "ExtractConfig file updated: tmp/$scenario/$scenario.EX"
