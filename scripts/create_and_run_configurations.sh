@@ -43,13 +43,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Process scaleup configurations
-echo "Processing scaleup configurations..."
-./scripts/batch_individual_json_configs.sh "./config/$scenario/scaleup"
+# Process configurations
+echo "Processing configurations..."
+./scripts/batch_individual_json_configs.sh "./config/$scenario"
 
-# Check if the scaleup processing was successful
+# Check if the processing was successful
 if [ $? -ne 0 ]; then
-    echo "Error: Scaleup configuration processing failed. Exiting."
+    echo "Error: Configuration processing failed. Exiting."
     exit 1
 fi
 

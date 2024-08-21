@@ -28,9 +28,9 @@ def process_country(country, iso3_code, filename, template_config, scenario):
     income_status = get_tag(iso3_code, "wb_income")
     base_coverage = get_base_coverage(income_status)
     
-    create_config(filename, iso3_code, country, template_config, base_coverage, TARGET_RATE, "scaleup", scenario)
+    create_config(filename, iso3_code, country, template_config, base_coverage, TARGET_RATE, scenario)
 
-def create_config(filename, iso3_code, country, config, baseline_coverage, target_coverage, scaleup_type, scenario):
+def create_config(filename, iso3_code, country, config, baseline_coverage, target_coverage, scenario):
     for association_type in ['treatment associations', 'prevention associations']:
         for association in config[association_type]:
             association['baseline_coverage'] = baseline_coverage
@@ -42,17 +42,19 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, targe
         "iso3": iso3_code,
         "country": country,
         "scenario": scenario,
-        "scaleup_type": scaleup_type
+        "scaleup_type": "scaleup"  # Keeping this for backward compatibility
     }
     
-    output_dir = f'./config/{scenario}/{scaleup_type}'
+    output_dir = f'./config/{scenario}'
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, f'{iso3_code}_{scenario}_{scaleup_type}.json')
+    output_path = os.path.join(output_dir, f'{iso3_code}_{scenario}.json')
     
     with open(output_path, 'w') as f:
         json.dump(config, f, indent=2)
 
 def extract_scenario_from_filename(filename):
+    # Assuming the filename format is something like "template_configXXX.json"
+    # where XXX is the scenario
     base_name = os.path.basename(filename)
     scenario = base_name.split('_')[-1].split('.')[0]
     return scenario
