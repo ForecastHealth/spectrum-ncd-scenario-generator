@@ -28,7 +28,6 @@ def process_country(country, iso3_code, filename, template_config, scenario):
     income_status = get_tag(iso3_code, "wb_income")
     base_coverage = get_base_coverage(income_status)
     
-    create_config(filename, iso3_code, country, template_config, base_coverage, base_coverage, "baseline", scenario)
     create_config(filename, iso3_code, country, template_config, base_coverage, TARGET_RATE, "scaleup", scenario)
 
 def create_config(filename, iso3_code, country, config, baseline_coverage, target_coverage, scaleup_type, scenario):
@@ -54,8 +53,6 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, targe
         json.dump(config, f, indent=2)
 
 def extract_scenario_from_filename(filename):
-    # Assuming the filename format is something like "template_configXXX.json"
-    # where XXX is the scenario
     base_name = os.path.basename(filename)
     scenario = base_name.split('_')[-1].split('.')[0]
     return scenario
@@ -63,7 +60,6 @@ def extract_scenario_from_filename(filename):
 def main(template_config_path):
     with open(template_config_path, 'r') as f:
         template_config = json.load(f)
-
     scenario = extract_scenario_from_filename(template_config_path)
     
     iso3_codes = get_iso3_codes()
