@@ -74,5 +74,7 @@ for file in "./tmp/$scenario"/*.PJNZ; do
     echo ",C:\\Users\\Administrator\\Documents\\$scenario\\$filename" >> "./tmp/$scenario/$scenario.EX"
 done
 
+echo "Number of selected indicators: ,0" >> "$temp_file"
+
 echo "All processing complete. Output files are located in tmp/$scenario/"
 echo "ExtractConfig file updated: tmp/$scenario/$scenario.EX"
