@@ -25,7 +25,7 @@ display_menu() {
 }
 
 # Main script execution
-echo "Welcome to the combined processing script."
+echo "Welcome to the configuration processing script."
 
 # Display menu and get user selection
 display_menu
@@ -40,16 +40,6 @@ python -m scripts.create_configurations "$selected_template"
 # Check if the Python script executed successfully
 if [ $? -ne 0 ]; then
     echo "Error: Configuration creation failed. Exiting."
-    exit 1
-fi
-
-# Process baseline configurations
-echo "Processing baseline configurations..."
-./scripts/batch_individual_json_configs.sh "./config/$scenario/baseline"
-
-# Check if the baseline processing was successful
-if [ $? -ne 0 ]; then
-    echo "Error: Baseline configuration processing failed. Exiting."
     exit 1
 fi
 
