@@ -261,13 +261,18 @@ def process_nc_content(nc_content: List[List[str]], config_path: str) -> List[Li
 
 def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_filename: str = None, enable_logging: bool = False):
     """Process a PJNZ file, update its NC content, and create a new compressed PJNZ file."""
-    config_name = os.path.splitext(os.path.basename(config_path))[0]
-    pjnz_filename = os.path.basename(pjnz_path)
+    config = load_config(config_path)
+    metadata = config.get('metadata', {})
+    iso3 = metadata.get('iso3', '')
+    scenario = metadata.get('scenario', '')
+    
+    # Ensure output_dir exists
+    os.makedirs(output_dir, exist_ok=True)
     
     if output_filename:
         output_filename = f"{output_filename}.PJNZ"
     else:
-        output_filename = f"{os.path.splitext(pjnz_filename)[0]}_{config_name}.PJNZ"
+        output_filename = f"{iso3}_{scenario}.PJNZ"
     
     log_file_path = os.path.join(output_dir, f"{output_filename}.log")
     setup_logging(log_file_path, enable_logging)
@@ -292,8 +297,16 @@ def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_
 
 def process_nc_file_direct(nc_path: str, config_path: str, output_dir: str, enable_logging: bool = False):
     """Process an NC file directly and output the updated NC file."""
-    output_filename = os.path.splitext(os.path.basename(config_path))[0]
-    output_nc_path = os.path.join(output_dir, f"{output_filename}.NC")
+    config = load_config(config_path)
+    metadata = config.get('metadata', {})
+    iso3 = metadata.get('iso3', '')
+    scenario = metadata.get('scenario', '')
+    
+    # Ensure output_dir exists
+    os.makedirs(output_dir, exist_ok=True)
+    
+    output_filename = f"{iso3}_{scenario}.NC"
+    output_nc_path = os.path.join(output_dir, output_filename)
     log_file_path = os.path.join(output_dir, f"{output_filename}.log")
     setup_logging(log_file_path, enable_logging)
 

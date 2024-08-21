@@ -22,12 +22,12 @@ for config_file in "$CONFIG_DIR"/*.json; do
 
     # Extract metadata using jq
     pjnz_filename=$(jq -r '.metadata.pjnz_filename' "$config_file")
-    iso3=$(jq -r '.metadata.iso3 // empty' "$config_file")
-    scenario=$(jq -r '.metadata.scenario // empty' "$config_file")
+    iso3=$(jq -r '.metadata.iso3' "$config_file")
+    scenario=$(jq -r '.metadata.scenario' "$config_file")
 
     # Check if all required metadata is present
-    if [ -z "$pjnz_filename" ]; then
-        echo "Warning: Missing pjnz_filename in $config_file. Skipping."
+    if [ -z "$pjnz_filename" ] || [ -z "$iso3" ] || [ -z "$scenario" ]; then
+        echo "Warning: Missing required metadata in $config_file. Skipping."
         continue
     fi
 
@@ -41,14 +41,9 @@ for config_file in "$CONFIG_DIR"/*.json; do
     fi
 
     # Construct the output filename
-    if [ -n "$iso3" ] && [ -n "$scenario" ]; then
-        output_filename="${iso3}_${scenario}"
-        echo "Processing: $iso3 ($scenario)"
-        python -m src.main pjnz "$pjnz_path" "$config_file" "$output_filename"
-    else
-        echo "Processing: $pjnz_filename"
-        python -m src.main pjnz "$pjnz_path" "$config_file"
-    fi
+    output_filename="${iso3}_${scenario}"
+    echo "Processing: $iso3 ($scenario)"
+    python -m src.main pjnz "$pjnz_path" "$config_file" "$output_filename"
 
     # Add a blank line for readability
     echo

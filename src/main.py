@@ -1,6 +1,6 @@
 import os
 import sys
-from .nc_processor import process_pjnz_file, process_nc_file_direct
+from .nc_processor import process_pjnz_file, process_nc_file_direct, load_config
 
 def main():
     if len(sys.argv) < 3:
@@ -13,7 +13,12 @@ def main():
     file_path = sys.argv[2]
     config_path = sys.argv[3]
 
-    output_dir = "./tmp"
+    # Load config to get scenario
+    config = load_config(config_path)
+    scenario = config.get('metadata', {}).get('scenario', '')
+
+    # Create scenario-specific output directory
+    output_dir = os.path.join("./tmp", scenario)
     os.makedirs(output_dir, exist_ok=True)
 
     # Check if logging is enabled
