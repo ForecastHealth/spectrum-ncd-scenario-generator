@@ -4,7 +4,6 @@ import csv
 import argparse
 from country_metadata import get_tag
 
-TARGET_RATE = 0.95
 COUNTRY_PROJECTIONS_DIR = "./examples"  # Where the country PJZN are
 
 def get_iso3_codes():
@@ -28,13 +27,16 @@ def process_country(country, iso3_code, filename, template_config, scenario):
     income_status = get_tag(iso3_code, "wb_income")
     base_coverage = get_base_coverage(income_status)
     
-    create_config(filename, iso3_code, country, template_config, base_coverage, TARGET_RATE, scenario)
+    create_config(filename, iso3_code, country, template_config, base_coverage, scenario)
 
-def create_config(filename, iso3_code, country, config, baseline_coverage, target_coverage, scenario):
-    for association_type in ['treatment associations', 'prevention associations']:
+def create_config(filename, iso3_code, country, config, baseline_coverage, scenario):
+    for association_type in [
+        'treatment associations',
+        'prevention associations',
+        'risk factors',
+    ]:
         for association in config[association_type]:
             association['baseline_coverage'] = baseline_coverage
-            association['target_coverage'] = target_coverage
     
     # Add metadata
     config['metadata'] = {
