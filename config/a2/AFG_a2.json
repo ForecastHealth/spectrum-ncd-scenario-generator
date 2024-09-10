@@ -1,0 +1,23 @@
+{
+  "treatment associations": [],
+  "prevention associations": [],
+  "risk factors": [
+    {
+      "risk factor": "NC_mstRFAlcoholBanAdvert",
+      "baseline_coverage": 0.05,
+      "target_coverage": 0.95,
+      "scaling_start_index": 1,
+      "scaling_stop_index": 3,
+      "levels": [
+        4
+      ]
+    }
+  ],
+  "metadata": {
+    "pjnz_filename": "./examples/Afghanistan.PJNZ",
+    "iso3": "AFG",
+    "country": "Afghanistan",
+    "scenario": "a2",
+    "scaleup_type": "scaleup"
+  }
+}
