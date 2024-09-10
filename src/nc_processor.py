@@ -2,7 +2,7 @@ import json
 import io
 import csv
 import logging
-from typing import Dict, List
+from typing import Dict, List, Union
 import os
 import zipfile
 
@@ -159,105 +159,96 @@ def process_risk_factors(nc_data: List[List[str]], risk_factors: List[Dict], map
 
     return nc_data
 
-def process_nc_file(nc_data: List[List[str]], config: Dict, constants_lookup: Dict[str, Dict[str, str]], mapped_risk_ids: List[List[str]]) -> List[List[str]]:
-    """Process the NC file, updating Treatment and Prevention Associations as encountered."""
+def load_nc_file(file_path: str) -> List[List[str]]:
+    """Load and return an NC file as a list of lists."""
+    logging.info(f"Loading NC file: {file_path}")
+    try:
+        with open(file_path, 'r', newline='') as f:
+            data = list(csv.reader(f))
+        logging.info(f"NC file loaded successfully: {len(data)} rows")
+        return data
+    except FileNotFoundError:
+        logging.error(f"NC file not found: {file_path}")
+        raise
+
+def process_nc_file(template_nc: List[List[str]], scenario_nc: List[List[str]]) -> List[List[str]]:
+    """Process the NC file, updating coverages from scenario NC file."""
     logging.info("Starting to process NC file")
     
+    updated_nc = template_nc.copy()
     current_block_type = None
     block_start_index = -1
     
-    for i, row in enumerate(nc_data):
+    for i, row in enumerate(updated_nc):
         if not row:  # Skip empty rows
             continue
 
-        if row[0] == "<Treatment Association>" or row[0] == "<Prevention Association>":
-            current_block_type = row[0][1:-1]  # Remove < and >
+        if row[0] in ["<Treatment Association>", "<Prevention Association>", " <RF Coverage V2 now with more levels>"]:
+            current_block_type = row[0].strip('<>')
             block_start_index = i
             logging.info(f"Found start of {current_block_type} block at row {i}")
         elif row[0] == "<End>" and current_block_type in ["Treatment Association", "Prevention Association"]:
-            process_association_block(nc_data, block_start_index, i, current_block_type, config, constants_lookup)
+            update_coverage_block(updated_nc, scenario_nc, block_start_index, i, current_block_type)
             current_block_type = None
             block_start_index = -1
-        elif row[0] == " <RF Coverage V2 now with more levels>":
-            logging.info("Found start of Risk Factor block")
-            nc_data = process_risk_factors(nc_data, config["risk factors"], mapped_risk_ids)
+        elif row[0] == "<Risk Factor Stata>" and current_block_type == "RF Coverage V2 now with more levels":
+            update_coverage_block(updated_nc, scenario_nc, block_start_index, i, current_block_type)
             break  # Assuming risk factors are at the end of the file
 
     logging.info("Finished processing NC file")
-    return nc_data
+    return updated_nc
 
-def process_association_block(nc_data: List[List[str]], start_index: int, end_index: int, block_type: str, config: Dict, constants_lookup: Dict[str, Dict[str, str]]):
-    """Process a single Treatment or Prevention Association block."""
-    disease_id = None
-    treatment_id = None
-    num_impacts = 1
-
-    for i in range(start_index, end_index):
-        if nc_data[i][1] == "DiseaseID":
-            disease_id = nc_data[i][2]
-        elif nc_data[i][1] in ["treatID", "PreventionID"]:
-            treatment_id = nc_data[i][2]
-        elif nc_data[i][1] == "NumImpacts":
-            num_impacts = int(nc_data[i][2])
-            logging.info(f"Number of impacts for this block: {num_impacts}")
-
-    if not disease_id or not treatment_id:
-        logging.warning(f"Invalid {block_type} block: missing DiseaseID or treatID/PreventionID")
-        return
-
-    # Look up the association in the config
-    association_type = "treatment associations" if block_type == "Treatment Association" else "prevention associations"
-    matching_assoc = next((assoc for assoc in config[association_type] 
-                           if constants_lookup["diseaseID"].get(assoc["disease"]) == disease_id
-                           and constants_lookup["treatmentID"].get(assoc.get("treatment") or assoc.get("prevention")) == treatment_id), 
-                          None)
-
-    if not matching_assoc:
-        logging.info(f"No matching configuration found for {block_type}: DiseaseID {disease_id}, TreatmentID {treatment_id}")
-        return
-
-    # Update coverages
+def update_coverage_block(template_nc: List[List[str]], scenario_nc: List[List[str]], start_index: int, end_index: int, block_type: str):
+    """Update a single Treatment, Prevention, or Risk Factor coverage block."""
     coverages_start = -1
     for i in range(start_index, end_index):
-        if nc_data[i][0] == "<Coverages>":
+        if template_nc[i][0] == "<Coverages>" or (block_type == "RF Coverage V2 now with more levels" and i == start_index + 3):
             coverages_start = i + 1
             break
 
     if coverages_start == -1:
-        logging.warning(f"No <Coverages> section found in {block_type} block: DiseaseID {disease_id}, TreatmentID {treatment_id}")
+        logging.warning(f"No <Coverages> section found in {block_type} block")
         return
 
-    for j in range(num_impacts):
-        current_row = coverages_start + j
-        if current_row >= end_index:
-            logging.warning(f"Unexpected end of block while processing coverages: DiseaseID {disease_id}, TreatmentID {treatment_id}")
-            break
+    # Find corresponding block in scenario NC
+    scenario_block_start = find_corresponding_block(scenario_nc, template_nc[start_index][0])
+    if scenario_block_start == -1:
+        logging.warning(f"Corresponding {block_type} block not found in scenario NC")
+        return
 
-        coverages = nc_data[current_row][5:]
-        updated_coverages = update_coverage_rates(
-            coverages,
-            matching_assoc["baseline_coverage"] * 100,
-            matching_assoc["target_coverage"] * 100,
-            matching_assoc["scaling_start_index"],
-            matching_assoc["scaling_stop_index"]
-        )
-        nc_data[current_row] = nc_data[current_row][:5] + updated_coverages
-        logging.info(f"Updated coverages for {block_type}: DiseaseID {disease_id}, TreatmentID {treatment_id}, Impact {j + 1} of {num_impacts}")
-        logging.info(f"  Baseline: {matching_assoc['baseline_coverage']:.2f}, Target: {matching_assoc['target_coverage']:.2f}")
-        logging.info(f"  Start Index: {matching_assoc['scaling_start_index']}, Stop Index: {matching_assoc['scaling_stop_index']}")
-        logging.info(f"  Original coverages: {coverages}")
-        logging.info(f"  Updated coverages: {updated_coverages}")
+    scenario_coverages_start = scenario_block_start + (coverages_start - start_index)
 
-    logging.info(f"Finished processing {block_type} block: DiseaseID {disease_id}, TreatmentID {treatment_id}")
+    for i in range(coverages_start, end_index):
+        template_row = template_nc[i]
+        scenario_row = scenario_nc[scenario_coverages_start + (i - coverages_start)]
 
-def process_nc_content(nc_content: List[List[str]], config_path: str) -> List[List[str]]:
-    """Process NC content based on the given configuration."""
-    config = load_config(config_path)
-    constants = load_csv("./data/constants.csv")
-    constants_lookup = create_constants_lookup(constants)
-    mapped_risk_ids = load_csv("./data/mapped_risk_ids.csv")
+        if block_type == "RF Coverage V2 now with more levels":
+            coverage_start = 3
+        else:
+            coverage_start = 5
 
-    return process_nc_file(nc_content, config, constants_lookup, mapped_risk_ids)
+        # Update coverages, trimming scenario values to match template length
+        template_nc[i] = template_row[:coverage_start] + scenario_row[coverage_start:coverage_start+len(template_row[coverage_start:])]
+
+    logging.info(f"Updated coverages for {block_type} block")
+
+def find_corresponding_block(scenario_nc: List[List[str]], block_header: str) -> int:
+    """Find the starting index of the corresponding block in the scenario NC file."""
+    for i, row in enumerate(scenario_nc):
+        if row and row[0] == block_header:
+            return i
+    return -1
+
+def process_nc_content(template_nc: Union[str, List[List[str]]], scenario_nc_path: str) -> List[List[str]]:
+    """Process NC content based on the template and scenario NC files."""
+    if isinstance(template_nc, str):
+        template_nc_data = load_nc_file(template_nc)
+    else:
+        template_nc_data = template_nc
+    
+    scenario_nc_data = load_nc_file(scenario_nc_path)
+
+    return process_nc_file(template_nc_data, scenario_nc_data)
 
 def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_filename: str = None, enable_logging: bool = False):
     """Process a PJNZ file, update its NC content, and create a new compressed PJNZ file."""
@@ -277,11 +268,13 @@ def process_pjnz_file(pjnz_path: str, config_path: str, output_dir: str, output_
     log_file_path = os.path.join(output_dir, f"{output_filename}.log")
     setup_logging(log_file_path, enable_logging)
     
+    scenario_nc_path = os.path.join('./a3_projections', f"{scenario}.NC")
+
     with zipfile.ZipFile(pjnz_path, 'r') as pjnz_file:
         nc_filename = next(name for name in pjnz_file.namelist() if name.endswith('.NC'))
-        nc_content = list(csv.reader(pjnz_file.open(nc_filename).read().decode('utf-8').splitlines()))
+        template_nc_content = list(csv.reader(pjnz_file.open(nc_filename).read().decode('utf-8').splitlines()))
 
-    updated_nc_content = process_nc_content(nc_content, config_path)
+    updated_nc_content = process_nc_content(template_nc_content, scenario_nc_path)
 
     output_pjnz_path = os.path.join(output_dir, output_filename)
     with zipfile.ZipFile(output_pjnz_path, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as new_pjnz_file:
@@ -310,8 +303,9 @@ def process_nc_file_direct(nc_path: str, config_path: str, output_dir: str, enab
     log_file_path = os.path.join(output_dir, f"{output_filename}.log")
     setup_logging(log_file_path, enable_logging)
 
-    nc_content = load_csv(nc_path)
-    updated_nc_content = process_nc_content(nc_content, config_path)
+    scenario_nc_path = os.path.join('./a3_projections', f"{scenario}.NC")
+
+    updated_nc_content = process_nc_content(nc_path, scenario_nc_path)
     save_csv(output_nc_path, updated_nc_content)
 
     logging.info(f"Updated NC file saved to {output_nc_path}")
