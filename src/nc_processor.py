@@ -109,13 +109,13 @@ def get_risk_factor_indices(mapped_risk_ids: List[List[str]], risk_factor: str, 
     logging.info(f"Found {len(indices)} matching indices for risk factor: {risk_factor}")
     return indices
 
-def process_risk_factors(nc_data: List[List[str]], risk_factors: List[Dict], mapped_risk_ids: List[List[str]]) -> List[List[str]]:
+def process_risk_factors(template_nc: List[List[str]], scenario_nc: List[List[str]]) -> List[List[str]]:
     """Process risk factors and update the NC data."""
-    logging.info(f"Processing risk factors: {len(risk_factors)} risk factors")
+    logging.info("Processing risk factors")
     rf_start_index = -1
     rf_end_index = -1
 
-    for i, row in enumerate(nc_data):
+    for i, row in enumerate(template_nc):
         if row and row[0] == " <RF Coverage V2 now with more levels>":
             rf_start_index = i
             logging.info(f"Found start of risk factor block at row {i}")
@@ -125,39 +125,25 @@ def process_risk_factors(nc_data: List[List[str]], risk_factors: List[Dict], map
             break
 
     if rf_start_index == -1 or rf_end_index == -1:
-        logging.warning("Risk factor block not found in NC file")
-        return nc_data
+        logging.warning("Risk factor block not found in template NC file")
+        return template_nc
 
-    for rf in risk_factors:
-        risk_factor = rf["risk factor"]
-        indices = get_risk_factor_indices(mapped_risk_ids, risk_factor, rf["levels"])
-        
-        if not indices:
-            logging.warning(f"Risk Factor: No matching indices found for {risk_factor}")
-            continue
+    # Find corresponding block in scenario NC
+    scenario_rf_start = find_corresponding_block(scenario_nc, " <RF Coverage V2 now with more levels>")
+    if scenario_rf_start == -1:
+        logging.warning("Risk factor block not found in scenario NC file")
+        return template_nc
 
-        logging.info(f"Risk Factor: Processing {risk_factor}")
-        logging.info(f"  Levels: {rf['levels']}")
-        logging.info(f"  Matching indices: {indices}")
+    # Update risk factor coverages
+    for i in range(rf_start_index + 3, rf_end_index):  # +3 to skip header rows
+        template_row = template_nc[i]
+        scenario_row = scenario_nc[scenario_rf_start + (i - rf_start_index)]
 
-        for index in indices:
-            coverages = nc_data[rf_start_index + 3][3:]
-            updated_coverages = update_coverage_rates(
-                coverages,
-                rf["baseline_coverage"] * 100,
-                rf["target_coverage"] * 100,
-                rf["scaling_start_index"],
-                rf["scaling_stop_index"]
-            )
-            nc_data[rf_start_index + 3 + index] = nc_data[rf_start_index + 3 + index][:3] + updated_coverages
-            
-            logging.info(f"  Updated coverages for index {index}")
-            logging.info(f"    Baseline: {rf['baseline_coverage']:.2f}, Target: {rf['target_coverage']:.2f}")
-            logging.info(f"    Start Index: {rf['scaling_start_index']}, Stop Index: {rf['scaling_stop_index']}")
-            logging.info(f"    Original coverages: {coverages}")
-            logging.info(f"    Updated coverages: {updated_coverages}")
+        # Update coverages, trimming scenario values to match template length
+        template_nc[i] = template_row[:3] + scenario_row[3:3+len(template_row[3:])]
 
-    return nc_data
+    logging.info("Finished processing risk factors")
+    return template_nc
 
 def load_nc_file(file_path: str) -> List[List[str]]:
     """Load and return an NC file as a list of lists."""
@@ -183,7 +169,7 @@ def process_nc_file(template_nc: List[List[str]], scenario_nc: List[List[str]]) 
         if not row:  # Skip empty rows
             continue
 
-        if row[0] in ["<Treatment Association>", "<Prevention Association>", " <RF Coverage V2 now with more levels>"]:
+        if row[0] in ["<Treatment Association>", "<Prevention Association>"]:
             current_block_type = row[0].strip('<>')
             block_start_index = i
             logging.info(f"Found start of {current_block_type} block at row {i}")
@@ -191,9 +177,9 @@ def process_nc_file(template_nc: List[List[str]], scenario_nc: List[List[str]]) 
             update_coverage_block(updated_nc, scenario_nc, block_start_index, i, current_block_type)
             current_block_type = None
             block_start_index = -1
-        elif row[0] == "<Risk Factor Stata>" and current_block_type == "RF Coverage V2 now with more levels":
-            update_coverage_block(updated_nc, scenario_nc, block_start_index, i, current_block_type)
-            break  # Assuming risk factors are at the end of the file
+
+    # Process risk factors separately
+    updated_nc = process_risk_factors(updated_nc, scenario_nc)
 
     logging.info("Finished processing NC file")
     return updated_nc
