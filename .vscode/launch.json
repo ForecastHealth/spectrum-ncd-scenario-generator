@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "python",
+            "request": "launch",
+            "name": "inspect",
+            "module": "src.main",
+            "args": ["./templates/foo.PJNZ", "./config/a2/AFG_a2.json"],
+            "pythonPath": "/home/rory/.virtual-environments/fha/bin/python",
+            "justMyCode": true
+        }
+    ]
+}
