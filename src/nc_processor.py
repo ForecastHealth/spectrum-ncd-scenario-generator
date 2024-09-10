@@ -185,10 +185,10 @@ def process_nc_file(template_nc: List[List[str]], scenario_nc: List[List[str]]) 
     return updated_nc
 
 def update_coverage_block(template_nc: List[List[str]], scenario_nc: List[List[str]], start_index: int, end_index: int, block_type: str):
-    """Update a single Treatment, Prevention, or Risk Factor coverage block."""
+    """Update a single Treatment or Prevention coverage block."""
     coverages_start = -1
     for i in range(start_index, end_index):
-        if template_nc[i][0] == "<Coverages>" or (block_type == "RF Coverage V2 now with more levels" and i == start_index + 3):
+        if template_nc[i][0] == "<Coverages>":
             coverages_start = i + 1
             break
 
@@ -202,25 +202,24 @@ def update_coverage_block(template_nc: List[List[str]], scenario_nc: List[List[s
         logging.warning(f"Corresponding {block_type} block not found in scenario NC")
         return
 
-    scenario_coverages_start = scenario_block_start + (coverages_start - start_index)
+    scenario_coverages_start = find_corresponding_block(scenario_nc[scenario_block_start:], "<Coverages>")
+    if scenario_coverages_start == -1:
+        logging.warning(f"No <Coverages> section found in scenario {block_type} block")
+        return
+    scenario_coverages_start += scenario_block_start + 1  # +1 to skip the <Coverages> row
 
     for i in range(coverages_start, end_index):
         template_row = template_nc[i]
         scenario_row = scenario_nc[scenario_coverages_start + (i - coverages_start)]
 
-        if block_type == "RF Coverage V2 now with more levels":
-            coverage_start = 3
-        else:
-            coverage_start = 5
-
         # Update coverages, trimming scenario values to match template length
-        template_nc[i] = template_row[:coverage_start] + scenario_row[coverage_start:coverage_start+len(template_row[coverage_start:])]
+        template_nc[i] = template_row[:5] + scenario_row[5:5+len(template_row[5:])]
 
     logging.info(f"Updated coverages for {block_type} block")
 
-def find_corresponding_block(scenario_nc: List[List[str]], block_header: str) -> int:
-    """Find the starting index of the corresponding block in the scenario NC file."""
-    for i, row in enumerate(scenario_nc):
+def find_corresponding_block(nc_data: List[List[str]], block_header: str) -> int:
+    """Find the starting index of the corresponding block in the NC data."""
+    for i, row in enumerate(nc_data):
         if row and row[0] == block_header:
             return i
     return -1
