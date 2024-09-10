@@ -6,7 +6,7 @@
             "request": "launch",
             "name": "inspect",
             "module": "src.main",
-            "args": ["./templates/foo.PJNZ", "./config/a2/AFG_a2.json"],
+            "args": ["pjnz", "./templates/foo.PJNZ", "./config/a2/AFG_a2.json"],
             "pythonPath": "/home/rory/.virtual-environments/fha/bin/python",
             "justMyCode": true
         }
