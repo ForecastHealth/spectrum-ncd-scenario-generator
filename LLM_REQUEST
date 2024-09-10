@@ -1,0 +1,6 @@
+I would like you to make edits to the src/ directory, in particular the src/main and src/nc_processor as necessary.
+
+When we run process_pjnz_file(), rather than using the nc_filename within the zipfile (lines 280), we need to use the nc_filename with the same name that exists in ./a3_projections/ 
+e.g. if the template is for a3, then the file will be ./a3_projections/a3.NC
+
+The rest of the logic can remain the same. 
