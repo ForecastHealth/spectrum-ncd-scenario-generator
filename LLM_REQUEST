@@ -1,6 +1,10 @@
-I would like you to make edits to the src/ directory, in particular the src/main and src/nc_processor as necessary.
+I'd like to alter the logic in this file for how we process .NC files. 
+At the moment, we look in the template .NC file (from the PJNZ file) and edit some lines of the code. 
 
-When we run process_pjnz_file(), rather than using the nc_filename within the zipfile (lines 280), we need to use the nc_filename with the same name that exists in ./a3_projections/ 
-e.g. if the template is for a3, then the file will be ./a3_projections/a3.NC
+However, the new logic should do the following 
+- open the same .NC (we can call this TEMPLATE.NC for this conversation)
+- open the .NC file from ./a3_projections/ that correspons to the scenario filename. e.g. the scenario a2.json would correspond to ./a3_projections/a2.NC (we can call this SCENARIO.NC for this conversation)
 
-The rest of the logic can remain the same. 
+Rather than look at the configuration file to determine what to change, go to all <coverage> sections and change TEMPLATE.NC with SCENARIO.NC. However, it's extremely important that the length of the values in TEMPLATE.NC are kept the same (SCENARIO.NC will be longer, so you need to trim the end off so it matches TEMPLATE.NC)
+
+We need to do this for the Treatment Prevention and Risk Factor coverages.
