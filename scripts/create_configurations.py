@@ -47,6 +47,9 @@ def create_config(filename, iso3_code, country, config, baseline_coverage, scena
         "scaleup_type": "scaleup"  # Keeping this for backward compatibility
     }
     
+    # Add default_coverage key
+    config['default_coverage'] = baseline_coverage
+    
     output_dir = f'./config/{scenario}'
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f'{iso3_code}_{scenario}.json')

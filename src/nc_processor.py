@@ -183,6 +183,12 @@ def process_nc_file(nc_data: List[List[str]], config: Dict, constants_lookup: Di
             nc_data = process_risk_factors(nc_data, config["risk factors"], mapped_risk_ids)
             break  # Assuming risk factors are at the end of the file
 
+    # Process unedited prevention associations
+    nc_data = process_unedited_prevention(nc_data, config, constants_lookup)
+
+    # Process unedited risk factors
+    nc_data = process_unedited_risk_factors(nc_data, config, mapped_risk_ids)
+
     logging.info("Finished processing NC file")
     return nc_data
 
@@ -249,6 +255,114 @@ def process_association_block(nc_data: List[List[str]], start_index: int, end_in
         logging.info(f"  Updated coverages: {updated_coverages}")
 
     logging.info(f"Finished processing {block_type} block: DiseaseID {disease_id}, TreatmentID {treatment_id}")
+
+def process_unedited_prevention(nc_data: List[List[str]], config: Dict, constants_lookup: Dict[str, Dict[str, str]]) -> List[List[str]]:
+    """Process unedited prevention associations, setting all coverage values to the first value."""
+    logging.info("Processing unedited prevention associations")
+    
+    current_block_type = None
+    block_start_index = -1
+    
+    for i, row in enumerate(nc_data):
+        if not row:  # Skip empty rows
+            continue
+
+        if row[0] == "<Prevention Association>":
+            current_block_type = "Prevention Association"
+            block_start_index = i
+        elif row[0] == "<End>" and current_block_type == "Prevention Association":
+            nc_data = process_unedited_prevention_block(nc_data, block_start_index, i, config, constants_lookup)
+            current_block_type = None
+            block_start_index = -1
+
+    return nc_data
+
+def process_unedited_prevention_block(nc_data: List[List[str]], start_index: int, end_index: int, config: Dict, constants_lookup: Dict[str, Dict[str, str]]) -> List[List[str]]:
+    """Process a single unedited Prevention Association block."""
+    disease_id = None
+    prevention_id = None
+
+    for i in range(start_index, end_index):
+        if nc_data[i][1] == "DiseaseID":
+            disease_id = nc_data[i][2]
+        elif nc_data[i][1] == "PreventionID":
+            prevention_id = nc_data[i][2]
+
+    if not disease_id or not prevention_id:
+        logging.warning(f"Invalid Prevention Association block: missing DiseaseID or PreventionID")
+        return nc_data
+
+    # Check if this association was edited
+    matching_assoc = next((assoc for assoc in config["prevention associations"] 
+                           if constants_lookup["diseaseID"].get(assoc["disease"]) == disease_id
+                           and constants_lookup["treatmentID"].get(assoc["prevention"]) == prevention_id), 
+                          None)
+
+    if matching_assoc:
+        logging.info(f"Prevention Association already edited: DiseaseID {disease_id}, PreventionID {prevention_id}")
+        return nc_data
+
+    # If not edited, set all coverage values to the first value
+    coverages_start = -1
+    for i in range(start_index, end_index):
+        if nc_data[i][0] == "<Coverages>":
+            coverages_start = i + 1
+            break
+
+    if coverages_start == -1:
+        logging.warning(f"No <Coverages> section found in Prevention Association block: DiseaseID {disease_id}, PreventionID {prevention_id}")
+        return nc_data
+
+    first_value = nc_data[coverages_start][5]
+    for i in range(coverages_start, end_index):
+        if nc_data[i][0] == "<End>":
+            break
+        nc_data[i][5:] = [first_value] * len(nc_data[i][5:])
+
+    logging.info(f"Set all coverage values to {first_value} for unedited Prevention Association: DiseaseID {disease_id}, PreventionID {prevention_id}")
+    return nc_data
+
+def process_unedited_risk_factors(nc_data: List[List[str]], config: Dict, mapped_risk_ids: List[List[str]]) -> List[List[str]]:
+    """Process unedited risk factors, setting coverage to the default coverage rate."""
+    logging.info("Processing unedited risk factors")
+    
+    default_coverage = config.get("default_coverage", 0.05)
+    rf_start_index = -1
+    rf_end_index = -1
+
+    for i, row in enumerate(nc_data):
+        if row and row[0] == " <RF Coverage V2 now with more levels>":
+            rf_start_index = i
+        elif rf_start_index != -1 and row and row[0] == "<Risk Factor Stata>":
+            rf_end_index = i
+            break
+
+    if rf_start_index == -1 or rf_end_index == -1:
+        logging.warning("Risk factor block not found in NC file")
+        return nc_data
+
+    edited_risk_factors = set((rf["risk factor"], level) for rf in config["risk factors"] for level in rf["levels"])
+
+    # Skip the header row
+    for row in mapped_risk_ids[1:]:
+        try:
+            risk_factor = row[1]
+            level = int(row[2])
+            index = int(row[0])
+        except (ValueError, IndexError):
+            logging.warning(f"Skipping invalid row in mapped_risk_ids: {row}")
+            continue
+
+        if (risk_factor, level) not in edited_risk_factors:
+            if rf_start_index + 3 + index < len(nc_data):
+                coverages = nc_data[rf_start_index + 3 + index][3:]
+                updated_coverages = [f"{default_coverage * 100:.1f}" if v else "" for v in coverages]
+                nc_data[rf_start_index + 3 + index] = nc_data[rf_start_index + 3 + index][:3] + updated_coverages
+                logging.info(f"Set coverage to default ({default_coverage * 100:.1f}%) for unedited Risk Factor: {risk_factor}, Level: {level}")
+            else:
+                logging.warning(f"Index out of range for Risk Factor: {risk_factor}, Level: {level}")
+
+    return nc_data
 
 def process_nc_content(nc_content: List[List[str]], config_path: str) -> List[List[str]]:
     """Process NC content based on the given configuration."""
