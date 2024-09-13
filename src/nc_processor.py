@@ -189,7 +189,43 @@ def process_nc_file(nc_data: List[List[str]], config: Dict, constants_lookup: Di
             nc_data = process_risk_factors(nc_data, config["risk factors"], mapped_risk_ids)
             break  # Assuming risk factors are at the end of the file
 
+    # Process Risk Target Level
+    nc_data = process_risk_target_level(nc_data)
+
+    # Process Risk Factor Coverage Level
+    nc_data = process_risk_factor_coverage_level(nc_data)
+
     logging.info("Finished processing NC file")
+    return nc_data
+
+def process_risk_target_level(nc_data: List[List[str]]) -> List[List[str]]:
+    """Process Risk Target Level blocks in the NC file."""
+    logging.info("Processing Risk Target Level blocks")
+    for i, row in enumerate(nc_data):
+        if row and row[0] == "<Risk Target Level>":
+            if i + 1 < len(nc_data):
+                nc_data[i + 1][3] = "1"
+                logging.info(f"Updated Risk Target Level at row {i + 1}")
+    return nc_data
+
+def process_risk_factor_coverage_level(nc_data: List[List[str]]) -> List[List[str]]:
+    """Process Risk Factor Coverage Level by intervention block in the NC file."""
+    logging.info("Processing Risk Factor Coverage Level by intervention block")
+    block_start = -1
+    for i, row in enumerate(nc_data):
+        if row and row[0] == " <Risk Factor Coverage Level by intervention>":
+            block_start = i
+            break
+    
+    if block_start != -1:
+        for i in range(block_start + 3, block_start + 61):  # Process 58 rows
+            if i < len(nc_data):
+                nc_data[i][2] = "1"
+                nc_data[i][3] = "1"
+        logging.info("Updated Risk Factor Coverage Level by intervention block")
+    else:
+        logging.warning("Risk Factor Coverage Level by intervention block not found")
+    
     return nc_data
 
 def process_association_block(nc_data: List[List[str]], start_index: int, end_index: int, block_type: str, config: Dict, constants_lookup: Dict[str, Dict[str, str]]):
