@@ -323,7 +323,7 @@ def process_unedited_prevention_block(nc_data: List[List[str]], start_index: int
     return nc_data
 
 def process_unedited_risk_factors(nc_data: List[List[str]], config: Dict, mapped_risk_ids: List[List[str]]) -> List[List[str]]:
-    """Process unedited risk factors, setting coverage to the default coverage rate."""
+    """Process unedited risk factors, setting coverage to 0 for levels 2, 3, and 4, and default coverage for others."""
     logging.info("Processing unedited risk factors")
     
     default_coverage = config.get("default_coverage", 0.05)
@@ -356,9 +356,15 @@ def process_unedited_risk_factors(nc_data: List[List[str]], config: Dict, mapped
         if (risk_factor, level) not in edited_risk_factors:
             if rf_start_index + 3 + index < len(nc_data):
                 coverages = nc_data[rf_start_index + 3 + index][3:]
-                updated_coverages = [f"{default_coverage * 100:.1f}" if v else "" for v in coverages]
+                if level in [2, 3, 4]:
+                    updated_coverages = ["0.0" if v else "" for v in coverages]
+                    log_message = f"Set coverage to 0.0% for unedited Risk Factor: {risk_factor}, Level: {level}"
+                else:
+                    updated_coverages = [f"{default_coverage * 100:.1f}" if v else "" for v in coverages]
+                    log_message = f"Set coverage to default ({default_coverage * 100:.1f}%) for unedited Risk Factor: {risk_factor}, Level: {level}"
+                
                 nc_data[rf_start_index + 3 + index] = nc_data[rf_start_index + 3 + index][:3] + updated_coverages
-                logging.info(f"Set coverage to default ({default_coverage * 100:.1f}%) for unedited Risk Factor: {risk_factor}, Level: {level}")
+                logging.info(log_message)
             else:
                 logging.warning(f"Index out of range for Risk Factor: {risk_factor}, Level: {level}")
 
