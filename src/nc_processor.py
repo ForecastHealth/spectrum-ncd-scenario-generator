@@ -323,50 +323,51 @@ def process_unedited_prevention_block(nc_data: List[List[str]], start_index: int
     return nc_data
 
 def process_unedited_risk_factors(nc_data: List[List[str]], config: Dict, mapped_risk_ids: List[List[str]]) -> List[List[str]]:
-    """Process unedited risk factors, setting coverage to 0 for levels 2, 3, and 4, and default coverage for others."""
+    """Process unedited risk factors based on specified rules."""
     logging.info("Processing unedited risk factors")
     
-    default_coverage = config.get("default_coverage", 0.05)
+    default_coverage = config.get("default_coverage", 5)
+    default_coverage *= 100
+    default_coverage = int(default_coverage)
     rf_start_index = -1
-    rf_end_index = -1
 
     for i, row in enumerate(nc_data):
         if row and row[0] == " <RF Coverage V2 now with more levels>":
             rf_start_index = i
-        elif rf_start_index != -1 and row and row[0] == "<Risk Factor Stata>":
-            rf_end_index = i
             break
 
-    if rf_start_index == -1 or rf_end_index == -1:
+    if rf_start_index == -1:
         logging.warning("Risk factor block not found in NC file")
         return nc_data
 
     edited_risk_factors = set((rf["risk factor"], level) for rf in config["risk factors"] for level in rf["levels"])
 
-    # Skip the header row
-    for row in mapped_risk_ids[1:]:
-        try:
-            risk_factor = row[1]
-            level = int(row[2])
-            index = int(row[0])
-        except (ValueError, IndexError):
-            logging.warning(f"Skipping invalid row in mapped_risk_ids: {row}")
-            continue
+    # Skip the header rows
+    data_start = rf_start_index + 3
 
-        if (risk_factor, level) not in edited_risk_factors:
-            if rf_start_index + 3 + index < len(nc_data):
-                coverages = nc_data[rf_start_index + 3 + index][3:]
-                if level in [2, 3, 4]:
-                    updated_coverages = ["0.0" if v else "" for v in coverages]
-                    log_message = f"Set coverage to 0.0% for unedited Risk Factor: {risk_factor}, Level: {level}"
-                else:
-                    updated_coverages = [f"{default_coverage * 100:.1f}" if v else "" for v in coverages]
-                    log_message = f"Set coverage to default ({default_coverage * 100:.1f}%) for unedited Risk Factor: {risk_factor}, Level: {level}"
+    # Process each risk factor (58 units of 12 rows each)
+    for rf_unit in range(58):
+        base_index = data_start + rf_unit * 12
+        
+        # Get risk factor name and check if it's edited
+        risk_factor = mapped_risk_ids[rf_unit + 1][1]  # +1 to skip header
+        
+        for level in range(1, 5):
+            level_base_index = base_index + (level - 1) * 3
+            
+            if (risk_factor, level) not in edited_risk_factors:
+                for sex_offset in range(3):  # 0: both, 1: male, 2: female
+                    row_index = level_base_index + sex_offset
+                    
+                    if level == 1 or (level in [2, 3, 4] and sex_offset == 0):
+                        new_value = default_coverage
+                    else:  # level in [2, 3, 4] and sex_offset in [1, 2]
+                        new_value = 0
+                    
+                    nc_data[row_index] = nc_data[row_index][:3] + [new_value if v else "" for v in nc_data[row_index][3:]]
                 
-                nc_data[rf_start_index + 3 + index] = nc_data[rf_start_index + 3 + index][:3] + updated_coverages
+                log_message = f"Updated Risk Factor: {risk_factor}, Level: {level}, Values: {nc_data[row_index][3:]}"
                 logging.info(log_message)
-            else:
-                logging.warning(f"Index out of range for Risk Factor: {risk_factor}, Level: {level}")
 
     return nc_data
 
