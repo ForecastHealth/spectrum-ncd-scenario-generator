@@ -163,6 +163,12 @@ def process_nc_file(nc_data: List[List[str]], config: Dict, constants_lookup: Di
     """Process the NC file, updating Treatment and Prevention Associations as encountered."""
     logging.info("Starting to process NC file")
     
+    # Process unedited prevention associations first
+    nc_data = process_unedited_prevention(nc_data, config)
+
+    # Process unedited risk factors first
+    nc_data = process_unedited_risk_factors(nc_data, config)
+
     current_block_type = None
     block_start_index = -1
     
@@ -182,12 +188,6 @@ def process_nc_file(nc_data: List[List[str]], config: Dict, constants_lookup: Di
             logging.info("Found start of Risk Factor block")
             nc_data = process_risk_factors(nc_data, config["risk factors"], mapped_risk_ids)
             break  # Assuming risk factors are at the end of the file
-
-    # Process unedited prevention associations
-    nc_data = process_unedited_prevention(nc_data, config, constants_lookup)
-
-    # Process unedited risk factors
-    nc_data = process_unedited_risk_factors(nc_data, config, mapped_risk_ids)
 
     logging.info("Finished processing NC file")
     return nc_data
@@ -256,9 +256,9 @@ def process_association_block(nc_data: List[List[str]], start_index: int, end_in
 
     logging.info(f"Finished processing {block_type} block: DiseaseID {disease_id}, TreatmentID {treatment_id}")
 
-def process_unedited_prevention(nc_data: List[List[str]], config: Dict, constants_lookup: Dict[str, Dict[str, str]]) -> List[List[str]]:
-    """Process unedited prevention associations, setting all coverage values to the first value."""
-    logging.info("Processing unedited prevention associations")
+def process_unedited_prevention(nc_data: List[List[str]], config: Dict) -> List[List[str]]:
+    """Process all prevention associations, setting all coverage values to the first value."""
+    logging.info("Processing all prevention associations")
     
     current_block_type = None
     block_start_index = -1
@@ -271,14 +271,14 @@ def process_unedited_prevention(nc_data: List[List[str]], config: Dict, constant
             current_block_type = "Prevention Association"
             block_start_index = i
         elif row[0] == "<End>" and current_block_type == "Prevention Association":
-            nc_data = process_unedited_prevention_block(nc_data, block_start_index, i, config, constants_lookup)
+            nc_data = process_unedited_prevention_block(nc_data, block_start_index, i)
             current_block_type = None
             block_start_index = -1
 
     return nc_data
 
-def process_unedited_prevention_block(nc_data: List[List[str]], start_index: int, end_index: int, config: Dict, constants_lookup: Dict[str, Dict[str, str]]) -> List[List[str]]:
-    """Process a single unedited Prevention Association block."""
+def process_unedited_prevention_block(nc_data: List[List[str]], start_index: int, end_index: int) -> List[List[str]]:
+    """Process a single Prevention Association block."""
     disease_id = None
     prevention_id = None
 
@@ -292,17 +292,6 @@ def process_unedited_prevention_block(nc_data: List[List[str]], start_index: int
         logging.warning(f"Invalid Prevention Association block: missing DiseaseID or PreventionID")
         return nc_data
 
-    # Check if this association was edited
-    matching_assoc = next((assoc for assoc in config["prevention associations"] 
-                           if constants_lookup["diseaseID"].get(assoc["disease"]) == disease_id
-                           and constants_lookup["treatmentID"].get(assoc["prevention"]) == prevention_id), 
-                          None)
-
-    if matching_assoc:
-        logging.info(f"Prevention Association already edited: DiseaseID {disease_id}, PreventionID {prevention_id}")
-        return nc_data
-
-    # If not edited, set all coverage values to the first value
     coverages_start = -1
     for i in range(start_index, end_index):
         if nc_data[i][0] == "<Coverages>":
@@ -319,12 +308,12 @@ def process_unedited_prevention_block(nc_data: List[List[str]], start_index: int
             break
         nc_data[i][5:] = [first_value] * len(nc_data[i][5:])
 
-    logging.info(f"Set all coverage values to {first_value} for unedited Prevention Association: DiseaseID {disease_id}, PreventionID {prevention_id}")
+    logging.info(f"Set all coverage values to {first_value} for Prevention Association: DiseaseID {disease_id}, PreventionID {prevention_id}")
     return nc_data
 
-def process_unedited_risk_factors(nc_data: List[List[str]], config: Dict, mapped_risk_ids: List[List[str]]) -> List[List[str]]:
-    """Process unedited risk factors based on specified rules."""
-    logging.info("Processing unedited risk factors")
+def process_unedited_risk_factors(nc_data: List[List[str]], config: Dict) -> List[List[str]]:
+    """Process all risk factors based on specified rules."""
+    logging.info("Processing all risk factors")
     
     default_coverage = config.get("default_coverage", 5)
     default_coverage *= 100
@@ -340,8 +329,6 @@ def process_unedited_risk_factors(nc_data: List[List[str]], config: Dict, mapped
         logging.warning("Risk factor block not found in NC file")
         return nc_data
 
-    edited_risk_factors = set((rf["risk factor"], level) for rf in config["risk factors"] for level in rf["levels"])
-
     # Skip the header rows
     data_start = rf_start_index + 3
 
@@ -349,25 +336,21 @@ def process_unedited_risk_factors(nc_data: List[List[str]], config: Dict, mapped
     for rf_unit in range(58):
         base_index = data_start + rf_unit * 12
         
-        # Get risk factor name and check if it's edited
-        risk_factor = mapped_risk_ids[rf_unit + 1][1]  # +1 to skip header
-        
         for level in range(1, 5):
             level_base_index = base_index + (level - 1) * 3
             
-            if (risk_factor, level) not in edited_risk_factors:
-                for sex_offset in range(3):  # 0: both, 1: male, 2: female
-                    row_index = level_base_index + sex_offset
-                    
-                    if level == 1 or (level in [2, 3, 4] and sex_offset == 0):
-                        new_value = default_coverage
-                    else:  # level in [2, 3, 4] and sex_offset in [1, 2]
-                        new_value = 0
-                    
-                    nc_data[row_index] = nc_data[row_index][:3] + [new_value if v else "" for v in nc_data[row_index][3:]]
+            for sex_offset in range(3):  # 0: both, 1: male, 2: female
+                row_index = level_base_index + sex_offset
                 
-                log_message = f"Updated Risk Factor: {risk_factor}, Level: {level}, Values: {nc_data[row_index][3:]}"
-                logging.info(log_message)
+                if level == 1 or (level in [2, 3, 4] and sex_offset == 0):
+                    new_value = default_coverage
+                else:  # level in [2, 3, 4] and sex_offset in [1, 2]
+                    new_value = 0
+                
+                nc_data[row_index] = nc_data[row_index][:3] + [new_value if v else "" for v in nc_data[row_index][3:]]
+            
+            log_message = f"Updated Risk Factor: Unit {rf_unit + 1}, Level: {level}, Values: {nc_data[level_base_index][3:]}"
+            logging.info(log_message)
 
     return nc_data
 
