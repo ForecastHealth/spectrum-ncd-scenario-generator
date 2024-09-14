@@ -168,10 +168,18 @@ def process_risk_target_level(nc_data: List[List[str]], risk_factors: List[Dict]
     logging.info("Processing Risk Target Level blocks")
     highest_level = get_highest_risk_factor_level(risk_factors)
     for i, row in enumerate(nc_data):
+        if row and row[0] == "<Risk Level>":
+            if i + 1 < len(nc_data):
+                nc_data[i + 1][3] = 1
+                logging.info(f"Updated Risk Target Level at row {i + 1} to {highest_level}")
         if row and row[0] == " <Risk Target Level>":
             if i + 1 < len(nc_data):
                 nc_data[i + 1][3] = highest_level
                 logging.info(f"Updated Risk Target Level at row {i + 1} to {highest_level}")
+        if row and row[0] == " <Risk Base Level>":
+            if i + 1 < len(nc_data):
+                nc_data[i + 1][3] = 1
+                logging.info(f"Updated Risk Base Level at row {i + 1} to {highest_level}")
     return nc_data
 
 def process_risk_factor_coverage_level(nc_data: List[List[str]], risk_factors: List[Dict]) -> List[List[str]]:
@@ -187,7 +195,7 @@ def process_risk_factor_coverage_level(nc_data: List[List[str]], risk_factors: L
     if block_start != -1:
         for i in range(block_start + 3, block_start + 61):  # Process 58 rows
             if i < len(nc_data):
-                nc_data[i][3] = highest_level
+                nc_data[i][3] = 1
                 nc_data[i][4] = highest_level
         logging.info(f"Updated Risk Factor Coverage Level by intervention block to {highest_level}")
     else:
@@ -362,6 +370,8 @@ def process_unedited_risk_factors(nc_data: List[List[str]], config: Dict) -> Lis
     default_coverage = int(default_coverage)
     rf_start_index = -1
 
+    risk_level = get_highest_risk_factor_level(config["risk factors"])
+
     for i, row in enumerate(nc_data):
         if row and row[0] == " <RF Coverage V2 now with more levels>":
             rf_start_index = i
@@ -384,9 +394,9 @@ def process_unedited_risk_factors(nc_data: List[List[str]], config: Dict) -> Lis
             for sex_offset in range(3):  # 0: both, 1: male, 2: female
                 row_index = level_base_index + sex_offset
                 
-                if level == 1 or (level in [2, 3, 4] and sex_offset == 0):
+                if level in [1, 4]:
                     new_value = default_coverage
-                else:  # level in [2, 3, 4] and sex_offset in [1, 2]
+                else:
                     new_value = 0
                 
                 nc_data[row_index] = nc_data[row_index][:3] + [new_value if v else "" for v in nc_data[row_index][3:]]
