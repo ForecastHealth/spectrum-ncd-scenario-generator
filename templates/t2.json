@@ -3,12 +3,12 @@
   "prevention associations": [],
   "risk factors": [
     {
-      "risk factor": "NC_mstRFTobaccoPackaging",
+      "risk factor": "NC_RFTobaccoWarnLabel",
       "baseline_coverage": 0.05,
       "target_coverage": 0.95,
       "scaling_start_index": 1,
       "scaling_stop_index": 4,
-      "levels": [4]
+      "levels": [1]
     }
   ]
 }
