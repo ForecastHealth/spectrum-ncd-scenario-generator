@@ -1,14 +1,15 @@
 {
   "treatment associations": [],
   "prevention associations": [],
-  "risk factors": [
+  "risk factors": [],
+  "tax interventions": [
     {
       "risk factor": "NC_mstRFAlcoholBanTax",
-      "baseline_coverage": 0.05,
-      "target_coverage": 0.25,
+      "baseline_coverage": 1,
+      "target_coverage": 1,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
-      "levels": [4]
+      "levels": [1]
     }
   ]
 }
