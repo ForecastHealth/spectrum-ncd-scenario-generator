@@ -9,7 +9,7 @@
       "target_coverage": 1,
       "scaling_start_index": 1,
       "scaling_stop_index": 3,
-      "levels": [1]
+      "level": 4
     }
   ]
 }
