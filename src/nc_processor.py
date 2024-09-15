@@ -6,6 +6,21 @@ from typing import Dict, List
 import os
 import zipfile
 
+
+TAX_RECORDS = [
+    "<Beer Tax record>",
+    "<Wine Tax record>",
+    "<Spirit Tax record",
+    "<Tobacco Tax record>"
+]
+
+TAX_MAPPINGS = {
+    "<Beer Tax record>": "NC_mstRFAlcoholBanTax",
+    "<Wine Tax record>": "NC_mstRFAlcoholBanTax",
+    "<Spirit Tax record": "NC_mstRFAlcoholBanTax",
+    "<Tobacco Tax record>": "NC_mstRFTobaccoTax",
+}
+
 def setup_logging(log_file_path: str, enable_logging: bool):
     """Set up logging to both console and file if enabled."""
     if enable_logging:
@@ -228,10 +243,12 @@ def process_nc_file(nc_data: List[List[str]], config: Dict, constants_lookup: Di
             process_association_block(nc_data, block_start_index, i, current_block_type, config, constants_lookup)
             current_block_type = None
             block_start_index = -1
+        elif row[0] in TAX_RECORDS:
+            logging.info("Found a Tax Record block")
+            nc_data = process_tax_interventions(config["risk factors"], nc_data)
         elif row[0] == " <RF Coverage V2 now with more levels>":
             logging.info("Found start of Risk Factor block")
             nc_data = process_risk_factors(nc_data, config["risk factors"], mapped_risk_ids)
-            break  # Assuming risk factors are at the end of the file
 
     # Process Risk Target Level
     nc_data = process_risk_target_level(nc_data, config["risk factors"])
@@ -241,6 +258,89 @@ def process_nc_file(nc_data: List[List[str]], config: Dict, constants_lookup: Di
 
     logging.info("Finished processing NC file")
     return nc_data
+
+def process_tax_interventions(risk_factors: List[Dict], nc_data: List[List[str]]) -> List[List[str]]:
+    TAX_INTERVENTIONS = [
+        "NC_mstRFTobaccoTax",
+        "NC_mstRFAlcoholBanTax"
+    ]
+
+    # Check which interventions are present in risk_factors
+    active_interventions = [rf["risk factor"] for rf in risk_factors if rf["risk factor"] in TAX_INTERVENTIONS]
+    
+    logging.info(f"Active tax interventions: {active_interventions}")
+
+    for tax_record, intervention in TAX_MAPPINGS.items():
+        if intervention not in active_interventions:
+            logging.info(f"Skipping {tax_record} as {intervention} is not in active interventions")
+            continue
+
+        logging.info(f"Processing tax intervention for: {tax_record}")
+        
+        matching_rf = next((rf for rf in risk_factors if rf["risk factor"] == intervention), None)
+        if not matching_rf:
+            logging.warning(f"No matching risk factor configuration found for intervention: {intervention}")
+            continue
+
+        rf_start_index = -1
+        rf_end_index = -1
+
+        for i, row in enumerate(nc_data):
+            if row and row[0] == tax_record:
+                rf_start_index = i
+                rf_end_index = i + 51  # Tax blocks are 51 rows long
+                break
+
+        if rf_start_index == -1 or rf_end_index == -1:
+            logging.warning(f"Tax block not found in NC file for: {tax_record}")
+            continue
+
+        # Update the retail price (third row of the tax block)
+        price_row_index = rf_start_index + 2
+        prices = nc_data[price_row_index][3:]
+        updated_prices = update_retail_price(
+            prices,
+            matching_rf["baseline_price"],
+            matching_rf["target_price"],
+            matching_rf["price_start_index"],
+            matching_rf["price_stop_index"]
+        )
+        nc_data[price_row_index] = nc_data[price_row_index][:3] + updated_prices
+
+        logging.info(f"Updated retail prices for {tax_record}")
+        logging.info(f"  Baseline: {matching_rf['baseline_price']:.2f}, Target: {matching_rf['target_price']:.2f}")
+        logging.info(f"  Start Index: {matching_rf['price_start_index']}, Stop Index: {matching_rf['price_stop_index']}")
+        logging.info(f"  Original prices: {prices}")
+        logging.info(f"  Updated prices: {updated_prices}")
+
+    return nc_data
+
+def update_retail_price(prices: List[str], baseline: float, target: float, start_index: int, stop_index: int) -> List[str]:
+    """Update retail prices based on the given parameters."""
+    logging.info(f"Updating retail prices: Baseline {baseline:.2f}, Target {target:.2f}, Start Index {start_index}, Stop Index {stop_index}")
+    
+    # Find the first non-empty value and the last value
+    first_non_empty = next((i for i, v in enumerate(prices) if v), 0)
+    last_non_empty = len(prices) - 1 - next((i for i, v in enumerate(reversed(prices)) if v), 0)
+    
+    updated_prices = prices[:first_non_empty]
+    
+    for i in range(first_non_empty, len(prices)):
+        if i <= start_index:
+            price = baseline
+        elif i >= stop_index:
+            price = target
+        else:
+            progress = (i - start_index) / (stop_index - start_index)
+            price = baseline + (target - baseline) * progress
+        
+        if i <= last_non_empty:
+            updated_prices.append(f"{int(round(price))}")
+        else:
+            updated_prices.append("")
+
+    logging.info(f"Retail prices updated: {len(updated_prices)} values")
+    return updated_prices
 
 def process_association_block(nc_data: List[List[str]], start_index: int, end_index: int, block_type: str, config: Dict, constants_lookup: Dict[str, Dict[str, str]]):
     """Process a single Treatment or Prevention Association block."""
