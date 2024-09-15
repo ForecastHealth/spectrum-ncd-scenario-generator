@@ -296,7 +296,7 @@ def process_tax_interventions(risk_factors: List[Dict], nc_data: List[List[str]]
             continue
 
         # Update the retail price (third row of the tax block)
-        price_row_index = rf_start_index + 2
+        price_row_index = rf_start_index + 3
         prices = nc_data[price_row_index][3:]
         updated_prices = update_retail_price(
             prices,
