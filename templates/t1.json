@@ -1,8 +1,7 @@
 {
   "treatment associations": [],
   "prevention associations": [],
-  "risk factors": [],
-  "tax interventions": [
+  "risk factors": [
     {
       "risk factor": "NC_mstRFTobaccoTax",
       "baseline_coverage": 1,
