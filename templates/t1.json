@@ -8,7 +8,11 @@
       "target_coverage": 1,
       "scaling_start_index": 1,
       "scaling_stop_index": 4,
-      "level": 4
+      "level": 4,
+      "baseline_price": 0,
+      "target_price": 0.75,
+      "price_start_index": 1,
+      "price_stop_index": 3
     }
   ]
 }
