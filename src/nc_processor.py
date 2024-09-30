@@ -307,6 +307,17 @@ def process_tax_interventions(risk_factors: List[Dict], nc_data: List[List[str]]
         )
         nc_data[price_row_index] = nc_data[price_row_index][:3] + updated_prices
 
+        impact_row_index = rf_start_index + 10
+        impacts = nc_data[impact_row_index][3:]
+        updated_impacts = update_tax_impact(
+            impacts,
+            0,
+            -0.32,
+            matching_rf["price_start_index"],
+            matching_rf["price_stop_index"]
+        )
+        nc_data[impact_row_index] = nc_data[impact_row_index][:3] + updated_impacts
+
         logging.info(f"Updated retail prices for {tax_record}")
         logging.info(f"  Baseline: {matching_rf['baseline_price']:.2f}, Target: {matching_rf['target_price']:.2f}")
         logging.info(f"  Start Index: {matching_rf['price_start_index']}, Stop Index: {matching_rf['price_stop_index']}")
@@ -314,6 +325,33 @@ def process_tax_interventions(risk_factors: List[Dict], nc_data: List[List[str]]
         logging.info(f"  Updated prices: {updated_prices}")
 
     return nc_data
+
+def update_tax_impact(prices: List[str], baseline: float, target: float, start_index: int, stop_index: int) -> List[str]:
+    """Update retail prices based on the given parameters."""
+    logging.info(f"Updating retail prices: Baseline {baseline:.2f}, Target {target:.2f}, Start Index {start_index}, Stop Index {stop_index}")
+    
+    # Find the first non-empty value and the last value
+    first_non_empty = next((i for i, v in enumerate(prices) if v), 0)
+    last_non_empty = len(prices) - 1 - next((i for i, v in enumerate(reversed(prices)) if v), 0)
+    
+    updated_prices = prices[:first_non_empty]
+    
+    for i in range(first_non_empty, len(prices)):
+        if i <= start_index:
+            price = baseline
+        elif i >= stop_index:
+            price = target
+        else:
+            progress = (i - start_index) / (stop_index - start_index)
+            price = baseline + (target - baseline) * progress
+        
+        if i <= last_non_empty:
+            updated_prices.append(str(round(price, 2)))
+        else:
+            updated_prices.append("")
+
+    logging.info(f"Retail prices updated: {len(updated_prices)} values")
+    return updated_prices
 
 def update_retail_price(prices: List[str], baseline: float, target: float, start_index: int, stop_index: int) -> List[str]:
     """Update retail prices based on the given parameters."""
