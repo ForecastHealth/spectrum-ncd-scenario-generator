@@ -6,6 +6,8 @@ from typing import Dict, List
 import os
 import zipfile
 
+TAX_INDICES = [96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155]
+
 
 TAX_RECORDS = [
     "<Beer Tax record>",
@@ -249,6 +251,7 @@ def process_nc_file(nc_data: List[List[str]], config: Dict, constants_lookup: Di
         elif row[0] == " <RF Coverage V2 now with more levels>":
             logging.info("Found start of Risk Factor block")
             nc_data = process_risk_factors(nc_data, config["risk factors"], mapped_risk_ids)
+            nc_data = set_taxes_to_100()
 
     # Process Risk Target Level
     nc_data = process_risk_target_level(nc_data, config["risk factors"])
@@ -256,25 +259,13 @@ def process_nc_file(nc_data: List[List[str]], config: Dict, constants_lookup: Di
     # Process Risk Factor Coverage Level
     nc_data = process_risk_factor_coverage_level(nc_data, config["risk factors"])
 
-    # Set tax coverage to 100 for levels 1-4
-    nc_data = set_taxes_to_100(nc_data)
-
     logging.info("Finished processing NC file")
     return nc_data
 
-def set_taxes_to_100(nc_data: List[List[str]]) -> List[List[str]]:
+def set_taxes_to_100() -> List[List[str]]:
     """Set tax coverage to 100 for every level (levels 1-4) without scaling."""
     logging.info("Setting tax coverage to 100 for levels 1-4")
-    for i, row in enumerate(nc_data):
-        if row and row[0] in TAX_RECORDS:
-            coverage_start_index = i + 6  # Coverage data starts 6 rows after the tax record identifier
-            # Levels 1-4 cover 4 rows
-            for level in range(4):
-                coverage_row_index = coverage_start_index + level
-                if coverage_row_index < len(nc_data):
-                    coverages = nc_data[coverage_row_index][3:]
-                    nc_data[coverage_row_index] = nc_data[coverage_row_index][:3] + ["100"] * len(coverages)
-                    logging.info(f"Set tax coverage to 100 at row {coverage_row_index} for level {level+1}")
+    for i in TAX_INDICES:
     return nc_data
 
 def process_tax_interventions(risk_factors: List[Dict], nc_data: List[List[str]], tax_record: str) -> List[List[str]]:
