@@ -4,13 +4,8 @@
   "risk factors": [
     {
       "risk factor": "NC_mstRFTobaccoTax",
-      "baseline_coverage": 1,
-      "target_coverage": 1,
-      "scaling_start_index": 0,
-      "scaling_stop_index": 0,
-      "level": 4,
-      "baseline_price": 0,
-      "target_price": 75,
+      "baseline_price": 36.52,
+      "target_price": 1.25,
       "price_start_index": 1,
       "price_stop_index": 3
     }
