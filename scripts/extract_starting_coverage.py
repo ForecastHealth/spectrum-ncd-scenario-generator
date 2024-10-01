@@ -37,9 +37,9 @@ def load_country_iso_mapping(mapping_path):
 
 def extract_starting_coverages(nc_data, constants_reverse_lookup):
     """
-    Extract starting coverage values from the NC data.
+    Extract starting coverage values from the NC data for treatments and preventions.
     """
-    coverages = []  # List of dictionaries: [{'intervention': '...', 'value': ..., 'type': 'Treatment/Prevention/Risk'}]
+    coverages = []  # List of dictionaries: [{'intervention': '...', 'value': ..., 'type': 'Treatment/Prevention'}]
 
     i = 0
     while i < len(nc_data):
@@ -109,6 +109,60 @@ def extract_starting_coverages(nc_data, constants_reverse_lookup):
             i += 1
     return coverages
 
+def extract_rf_starting_coverages(nc_data, constants_reverse_lookup):
+    """
+    Extract starting coverage values for risk factors from the NC data.
+    """
+    coverages = []  # List of dictionaries: [{'risk_factor': '...', 'level': ..., 'value': ...}]
+    i = 0
+    while i < len(nc_data):
+        row = nc_data[i]
+        if not row:
+            i += 1
+            continue
+        if row[0] == " <RF Coverage V2 now with more levels>":
+            # Found the start of the risk factors block
+            rf_block_start = i
+            # Skip header rows
+            data_start = rf_block_start + 3
+            # There are 58 risk factors, each with 12 rows
+            num_risk_factors = 58
+            rf_unit_size = 12
+            for unit_index in range(num_risk_factors):
+                base_index = data_start + unit_index * rf_unit_size
+                # Get the risk factor ID from the first row of the unit
+                rf_row = nc_data[base_index]
+                if len(rf_row) < 2:
+                    continue
+                risk_id = rf_row[1]
+                risk_name = constants_reverse_lookup['riskID'].get(risk_id, risk_id)
+                for level_index in range(4):  # Levels 1 to 4
+                    level_base_index = base_index + level_index * 3
+                    level = level_index + 1
+                    # Extract coverage from 'both sexes' row
+                    coverage_row = nc_data[level_base_index]
+                    # Ensure the row has enough columns
+                    if len(coverage_row) < 4:
+                        continue
+                    coverage_values = coverage_row[3:]
+                    # Get the first non-empty value
+                    starting_coverage = next(
+                        (v for v in coverage_values if v not in [None, '', ' ']), None)
+                    try:
+                        starting_coverage = float(starting_coverage)
+                    except (ValueError, TypeError):
+                        starting_coverage = None
+                    coverages.append({
+                        'risk_factor': risk_name,
+                        'level': level,
+                        'value': starting_coverage,
+                        'type': 'Risk Factor'
+                    })
+            break  # Exit after processing risk factors
+        else:
+            i += 1
+    return coverages
+
 def main():
     constants_path = 'data/constants.csv'
     examples_dir = './examples/'
@@ -144,17 +198,31 @@ def main():
                 nc_lines = nc_file.read().decode('utf-8').splitlines()
                 nc_data = list(csv.reader(nc_lines))
 
+        # Extract starting coverages for treatments and preventions
         coverages = extract_starting_coverages(nc_data, constants_reverse_lookup)
 
+        # Extract starting coverages for risk factors
+        risk_factor_coverages = extract_rf_starting_coverages(nc_data, constants_reverse_lookup)
+
+        # Add ISO code to each coverage entry
         for cov in coverages:
             all_coverages.append({
                 'ISO': iso_code,
                 'intervention': cov['intervention'],
-                'value': cov['value']
+                'value': cov['value'],
+                'type': cov['type']
+            })
+        for rf_cov in risk_factor_coverages:
+            all_coverages.append({
+                'ISO': iso_code,
+                'intervention': rf_cov['risk_factor'],
+                'level': rf_cov['level'],
+                'value': rf_cov['value'],
+                'type': rf_cov['type']
             })
 
     # Write to CSV
-    header = ['ISO', 'intervention', 'value']
+    header = ['ISO', 'intervention', 'level', 'value', 'type']
     with open(output_csv, 'w', newline='', encoding='utf-8-sig') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=header)
         writer.writeheader()
