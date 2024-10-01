@@ -13,11 +13,11 @@ def load_constants(constants_path):
         'riskID': {}
     }
     with open(constants_path, 'r', newline='', encoding='utf-8-sig') as f:
-        reader = csv.reader(f)
-        next(reader)  # Skip header
-
+        reader = csv.DictReader(f)
         for row in reader:
-            category, label, value = row
+            category = row['category']
+            label = row['label']
+            value = int(row['value'])
             if category in constants_reverse_lookup:
                 constants_reverse_lookup[category][value] = label
     return constants_reverse_lookup
@@ -64,18 +64,18 @@ def extract_starting_coverages(nc_data, constants_reverse_lookup):
                 if len(nc_data[j]) < 3:
                     continue
                 if nc_data[j][1] == "DiseaseID":
-                    disease_id = nc_data[j][2]
+                    disease_id = int(nc_data[j][2])
                 elif nc_data[j][1] in ["treatID", "PreventionID"]:
-                    intervention_id = nc_data[j][2]
+                    intervention_id = int(nc_data[j][2])
                 elif nc_data[j][1] == "NumImpacts":
                     num_impacts = int(nc_data[j][2])
             # Map IDs to names
             if disease_id and intervention_id:
-                disease_name = constants_reverse_lookup['diseaseID'].get(disease_id, disease_id)
+                disease_name = constants_reverse_lookup['diseaseID'].get(disease_id, str(disease_id))
                 if block_type == '<Treatment Association>':
-                    intervention_name = constants_reverse_lookup['treatmentID'].get(intervention_id, intervention_id)
+                    intervention_name = constants_reverse_lookup['treatmentID'].get(intervention_id, str(intervention_id))
                 else:
-                    intervention_name = constants_reverse_lookup['treatmentID'].get(intervention_id, intervention_id)
+                    intervention_name = constants_reverse_lookup['treatmentID'].get(intervention_id, str(intervention_id))
                 # Now find the <Coverages> section
                 coverages_start = -1
                 for j in range(block_start, block_end):
@@ -114,6 +114,12 @@ def extract_rf_starting_coverages(nc_data, constants_reverse_lookup):
     Extract starting coverage values for risk factors from the NC data.
     """
     coverages = []  # List of dictionaries: [{'risk_factor': '...', 'level': ..., 'value': ...}]
+    # Create a list of risk factor labels ordered by riskID value
+    risk_factor_labels = [None]*58  # Index 0 to 57
+    for risk_id_value, label in constants_reverse_lookup['riskID'].items():
+        if 1 <= risk_id_value <= 58:
+            risk_factor_labels[risk_id_value - 1] = label
+
     i = 0
     while i < len(nc_data):
         row = nc_data[i]
@@ -130,12 +136,10 @@ def extract_rf_starting_coverages(nc_data, constants_reverse_lookup):
             rf_unit_size = 12
             for unit_index in range(num_risk_factors):
                 base_index = data_start + unit_index * rf_unit_size
-                # Get the risk factor ID from the first row of the unit
-                rf_row = nc_data[base_index]
-                if len(rf_row) < 2:
-                    continue
-                risk_id = rf_row[1]
-                risk_name = constants_reverse_lookup['riskID'].get(risk_id, risk_id)
+                risk_id_value = unit_index + 1  # RiskID value corresponds to unit_index + 1
+                risk_name = risk_factor_labels[unit_index]
+                if not risk_name:
+                    risk_name = f"RiskID_{risk_id_value}"
                 for level_index in range(4):  # Levels 1 to 4
                     level_base_index = base_index + level_index * 3
                     level = level_index + 1
@@ -209,6 +213,7 @@ def main():
             all_coverages.append({
                 'ISO': iso_code,
                 'intervention': cov['intervention'],
+                'level': '',  # Treatments/Preventions don't have levels
                 'value': cov['value'],
                 'type': cov['type']
             })
